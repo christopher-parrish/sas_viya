@@ -1,0 +1,16 @@
+{
+  "name": "black_scholes_r",
+  "description": "UDF",
+  "function": "prediction",
+  "scoreCodeType": "r",
+  "trainTable": " ",
+  "trainCodeType": "r",
+  "algorithm": "UDF",
+  "targetVariable": "",
+  "targetEvent": "",
+  "targetLevel": "",
+  "eventProbVar": "option_val",
+  "modeler": "chparr",
+  "tool": "R",
+  "toolVersion": "R version 4.1.2 (2021-11-01)"
+}
