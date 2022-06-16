@@ -1,4 +1,8 @@
 
+###############################################
+###   Train & Register XGBoost Core Model   ###
+###############################################
+
 ###################
 ### Credentials ###
 ###################
@@ -6,13 +10,15 @@
 import keyring
 import runpy
 import os
+import urllib3
+urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-wd = 'C:/...'
-os.chdir(wd)
-from password import hostname, output_dir
-runpy.run_path(path_name='password.py')
+wd = os.getcwd()
+print(wd)
+from password_poc import hostname, output_dir
+runpy.run_path(path_name='password_poc.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
 metadata_output_dir = 'outputs'
@@ -25,7 +31,7 @@ import swat
 import pandas as pd
 
 port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert.pem')
+os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert_poc.pem')
 conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
 print(conn)
 print(conn.serverstatus())
@@ -51,7 +57,9 @@ conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
 ########################
 
 dm_inputdf =  conn.CASTable(in_mem_tbl, caslib=caslib).to_frame()
-# dm_inputdf = pd.read_csv(str(wd)+str('/')+in_mem_tbl+str('.csv'))
+
+### read csv from defined 'data_dir' directory
+#dm_inputdf = pd.read_csv(str(data_dir)+str('/')+in_mem_tbl+str('.csv'))
 
 ### print columns for review of model parameters
 print(dm_inputdf.dtypes)
@@ -63,8 +71,8 @@ print(dm_inputdf.dtypes)
 # import python libraries
 import numpy as np
 import xgboost as xgb
-from sklearn.metrics import classification_report, confusion_matrix, plot_roc_curve
-import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.utils import shuffle
 from pathlib import Path
 
 xgb_params = {
@@ -96,8 +104,9 @@ xgb_params = {
              'seed_per_iteration': False, 
              'sketch_eps': 0.03, 
              'subsample': 1, 
-             'tree_method': 'auto', 
+             'tree_method': 'auto'
              } 
+print(xgb_params)
 
 ### XGBOOST CORE
 xgb_params_train = {'num_boost_round': 100,
@@ -106,17 +115,19 @@ cutoff = 0.1
 
 ### model manager information
 model_name = 'xgboost_python'
-project_name = 'AML Risk Score'
+project_name = 'Risk Score'
 description = 'XGBoost Python'
 model_type = 'gradient_boost'
 predict_syntax = 'predict_proba'
 
 ### define macro variables for model
 dm_dec_target = 'ml_indicator'
-dm_partitionvar = 'analytic_partition' 
+dm_partitionvar = 'analytic_partition'
+create_new_partition = 'no' # 'yes', 'no'
 dm_key = 'account_id' 
 dm_classtarget_level = ['0', '1']
 dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1, 2]
+dm_partition_validate_perc, dm_partition_train_perc, dm_partition_test_perc = [0.3, 0.6, 0.1]
 
 ### create list of rejected predictor columns
 rejected_predictors = [
@@ -128,6 +139,17 @@ rejected_predictors = [
     'num_acctbal_chgs_gt2000',
     'occupation_risk'
     ]
+
+### create partition column, if not already in dataset
+if create_new_partition == 'yes':
+    dm_inputdf = shuffle(dm_inputdf)
+    dm_inputdf.reset_index(inplace=True, drop=True)
+    validate_rows = round(len(dm_inputdf)*dm_partition_validate_perc)
+    train_rows = round(len(dm_inputdf)*dm_partition_train_perc) + validate_rows
+    test_rows = len(dm_inputdf)-train_rows
+    dm_inputdf.loc[0:validate_rows,dm_partitionvar] = dm_partition_validate_val
+    dm_inputdf.loc[validate_rows:train_rows,dm_partitionvar] = dm_partition_train_val
+    dm_inputdf.loc[train_rows:,dm_partitionvar] = dm_partition_test_val
 
 ##############################
 ### Final Modeling Columns ###
@@ -158,52 +180,6 @@ y_test = dm_testdf[dm_dec_target]
 dm_validdf = dm_inputdf.loc[(dm_inputdf[dm_partitionvar] == dm_partition_validate_val)]
 X_valid = dm_validdf.loc[:, dm_input]
 y_valid = dm_validdf[dm_dec_target]
-
-##############
-### SCIKIT ###
-##############
-
-### estimate & fit model
-dm_model = xgb.XGBClassifier(**xgb_params)
-dm_model.fit(X_train, y_train)
-
-### score full data
-fullX = dm_inputdf.loc[:, dm_input]
-fully = dm_inputdf[dm_dec_target]
-plot_roc_curve(dm_model, fullX, fully)
-dm_scoreddf_prob = pd.DataFrame(dm_model.predict_proba(fullX), columns=dm_predictionvar)
-dm_scoreddf_class = pd.DataFrame(dm_model.predict(fullX), columns=[dm_classtarget_intovar])
-dm_scoreddf = pd.concat([dm_scoreddf_prob, dm_scoreddf_class], axis=1)
-plt.hist(x=dm_scoreddf_prob[dm_predictionvar[1]], bins=100)
-
-### create tables with predicted values
-trainProba = dm_model.predict_proba(X_train)
-testProba = dm_model.predict_proba(X_test)
-validProba = dm_model.predict_proba(X_valid)
-trainData = pd.concat([y_train.reset_index(drop=True), pd.Series(data=trainProba[:,1])], axis=1)
-testData = pd.concat([y_test.reset_index(drop=True), pd.Series(data=testProba[:,1])], axis=1)
-validData = pd.concat([y_valid.reset_index(drop=True), pd.Series(data=validProba[:,1])], axis=1)
-
-### print model & results
-predictions = dm_model.predict(X_test)
-cols = X_train.columns
-predictors = np.array(cols)
-tn, fp, fn, tp = confusion_matrix(y_test, predictions).ravel()
-print(description)
-print(description)
-print('model_parameters')
-print(dm_model)
-print(' ')
-print('model_performance')
-print('score_full:', dm_model.score(fullX, fully))
-print('score_train:', dm_model.score(X_train, y_train))
-print('score_test:', dm_model.score(X_test, y_test))
-print('score_valid:', dm_model.score(X_valid, y_valid))
-print('confusion_matrix:')
-print('(tn, fp, fn, tp)')
-print((tn, fp, fn, tp))
-print('classification_report:')
-print(classification_report(y_test, predictions))
 
 ####################
 ### XGBOOST CORE ###
@@ -276,10 +252,10 @@ print(*dm_input)
 ##### Using PZMM Zips Up Metadata #####
 #######################################
 
-import shutil
-import sasctl.pzmm as pzmm
 from sasctl import Session
-from sasctl._services.model_repository import ModelRepository as mr
+import sasctl.pzmm as pzmm
+import shutil
+import json
 
 ### define macro vars for model manager
 input_vars = X_train
@@ -301,6 +277,17 @@ if output_path.exists() and output_path.is_dir():
 
 ### create output path
 os.makedirs(output_path)
+
+### create python requirements file
+requirements = [
+    {
+        "step":"import math, pickle, pandas as pd, numpy as np, settings",
+        "command":"pip3 install math==3.10.5 pickle==3.10.5 numpy==1.20.3 pandas==1.3.4 settings==0.2.2"
+    }
+]
+requirementsObj = json.dumps(requirements, indent = 4)
+with open(str(output_path)+str('/requirements.json'), 'w') as outfile:
+    outfile.write(requirementsObj)
 
 ### create metadata and import to model manager
 pzmm.PickleModel.pickleTrainedModel(_, dm_model, model_name, output_path)
