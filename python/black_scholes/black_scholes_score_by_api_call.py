@@ -1,4 +1,4 @@
-
+#%%
 ###################
 ### Credentials ###
 ###################
@@ -9,10 +9,8 @@ import os
 
 ### run script that contains username, password, and hostname_model
     ### ...OR define directly in this script
-wd = 'C:/...'
-os.chdir(wd)
-from password import hostname_model
-runpy.run_path(path_name='password.py')
+from password_poc import hostname_model, wd
+runpy.run_path(os.path.join(wd, 'password_poc.py'))
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
 
@@ -41,12 +39,12 @@ headers = {'Authorization': 'Bearer ' + token}
 url = hostname_model + '/microanalyticScore/modules/'
 r = request('GET', url, params={}, headers=headers, verify=False)
 r.json()
-
+#%%
 ###########################
 ### Select Target Model ###
 ###########################
 
-model_name = 'black_scholes_python' # case sensitive
+model_name = 'DEMO_black_scholes_python' # case sensitive
 
 headers = {'Authorization': 'Bearer ' + token}
 url = hostname_model + '/microanalyticScore/modules/' + model_name + '/steps'
