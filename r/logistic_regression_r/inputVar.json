@@ -1,0 +1,80 @@
+[
+  {
+    "name": "checking_only_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "prior_ctr_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "address_change_2x_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "cross_border_trx_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "in_person_contact_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "linkedin_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "trx_10ksum_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "common_merchant_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "direct_deposit_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "marital_status",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "primary_transfer_cat",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "credit_score",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "num_transactions",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  }
+]
