@@ -166,12 +166,6 @@ dm_model <- cas.decisionTree.gbtreeTrain(conn,
     nBins=nBins, quantileBin=quantileBin 
     )
 
-### create score code
-cas.decisionTree.gbtreeCode(conn,
-  modelTable=list(caslib=caslib, name=cas_out_tbl),
-  code=list(casOut=list(caslib=caslib, name='gbtree_scorecode', replace=TRUE, promote=FALSE))
-  )
-
 ### score full data
 cas.decisionTree.dtreeScore(conn,
   modelTable=list(caslib=caslib, name=cas_out_tbl),
@@ -245,3 +239,9 @@ print(paste("ks=", stats['X_KS2_']), quote=FALSE)
 print(paste("auc=", stats['X_C_']), quote=FALSE)
 print(paste("cutoff=", stats['X_Cutoff_']), quote=FALSE)
 print(paste("confusion_matrix (tp, fp, tn, fn):", stats['X_TP_'], stats['X_FP_'], stats['X_TN_'], stats['X_FN_']), quote=FALSE)
+
+### create score code
+cas.decisionTree.gbtreeCode(conn,
+                            modelTable=list(caslib=caslib, name=cas_out_tbl),
+                            code=list(casOut=list(caslib=caslib, name='gbtree_scorecode', replace=TRUE, promote=FALSE))
+)
