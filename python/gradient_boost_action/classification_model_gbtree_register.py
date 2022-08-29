@@ -1,6 +1,6 @@
 
 #####################################################
-###      Train & Register CAS gbTree Model        ###
+###       Train & Publish SAS gbTree Model        ###
 #####################################################
 
 ###################
@@ -10,13 +10,14 @@
 import keyring
 import runpy
 import os
+from pathlib import Path
 import urllib3
 urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, output_dir, wd
-runpy.run_path(path_name='password_poc.py')
+from password_poc import hostname, wd, output_dir
+runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
 metadata_output_dir = 'outputs'
@@ -26,12 +27,10 @@ metadata_output_dir = 'outputs'
 ###################
 
 import swat
-import pandas as pd
 
 port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert_poc.pem')
+os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert.pem')
 conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
-print(conn)
 print(conn.serverstatus())
 
 #############################
@@ -68,14 +67,13 @@ conn.table.columnInfo(table={"caslib":caslib, "name":in_mem_tbl})
 ### Model Parameters ###
 ########################
 
-# import python libraries
-import numpy as np
-import pandas as pd
-from pathlib import Path
-### import actionsets
+### import packages
 conn.loadactionset('decisionTree')
 conn.loadactionset('astore')
+conn.loadactionset('explainModel')
 conn.loadactionset('fairAITools')
+conn.loadactionset('percentile')
+conn.loadactionset('modelPublishing')
 
 ### model arugments
 xgb_params = dict(
@@ -108,9 +106,9 @@ print(xgb_params)
 print(early_stop_params)
 
 ### model manager information
-model_name = 'gradboost_cas'
+model_name = 'gbtree_python'
 project_name = 'Risk Score'
-description = 'GradBoost CAS'
+description = 'gbtree_python'
 model_type = 'gradient_boost'
 
 ### define macro variables for model
@@ -149,10 +147,7 @@ for i in rejected_vars:
 dm_predictionvar = [str('P_') + dm_dec_target + dm_classtarget_level[0], str('P_') + dm_dec_target + dm_classtarget_level[1]]
 dm_classtarget_intovar = str('I_') + dm_dec_target
 
-##################
-### Data Split ###
-##################
-
+### create partition objects
 train_part = str(dm_partitionvar)+str('=')+str(dm_partition_train_val)
 test_part = str(dm_partitionvar)+str('=')+str(dm_partition_test_val)
 valid_part = str(dm_partitionvar)+str('=')+str(dm_partition_validate_val)
@@ -174,23 +169,33 @@ dm_model = conn.decisionTree.gbtreeTrain(**xgb_params,
     )
 
 ### score full data
-conn.astore.score(
+conn.decisionTree.dtreeScore(
+    modelTable=dict(caslib=caslib, name=cas_out_tbl),
     table=dict(caslib=caslib, name=in_mem_tbl), 
     copyvars=[dm_dec_target, dm_partitionvar],
-    casout=dict(name=cas_score_tbl, replace=True),
-    rstore=dict(caslib=caslib, name=astore_tbl)
+    casout=dict(caslib=caslib, name=cas_score_tbl, replace=True),
+    encodeName=True,
+    assessOneRow=True
     )
-score_astore = conn.CASTable(cas_score_tbl)
 
-### create tables with predicted values
-dm_scoreddf = conn.CASTable(score_astore).to_frame()
-dm_scoreddf[dm_dec_target] = dm_scoreddf[dm_dec_target].astype(int)
-trainData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_train_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
-testData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_test_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
-validData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_validate_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
-trainData = pd.DataFrame(trainData)
-testData = pd.DataFrame(testData)
-validData = pd.DataFrame(validData)
+### create score code
+conn.decisionTree.gbtreeCode(
+  modelTable=dict(caslib=caslib, name=cas_out_tbl),
+  code=dict(casOut=dict(caslib=caslib, name='gbtree_scorecode', replace=True, promote=False))
+  )
+
+####################
+### Assess Model ###
+####################
+
+conn.percentile.assess(
+  table=dict(caslib=caslib, name=cas_score_tbl),
+  event="1",
+  response=dm_dec_target,
+  inputs=dm_predictionvar[2],
+  cutStep=0.0001,
+  casOut=dict(caslib=caslib, name='gbtree_python_assess', replace=True)
+  )
 
 ### print model & results
 print(dm_model)
@@ -215,10 +220,24 @@ conn.fairAITools.assessBias(
 		sensitiveVariable = bias_var
         )
 
+######################################################
+### Create Pandas Dataframes with Predicted Values ###
+######################################################
+
+import pandas as pd
+
+score_astore = conn.CASTable(cas_score_tbl)
+dm_scoreddf = conn.CASTable(score_astore).to_frame()
+dm_scoreddf[dm_dec_target] = dm_scoreddf[dm_dec_target].astype(int)
+trainData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_train_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
+testData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_test_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
+validData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_validate_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
+trainData = pd.DataFrame(trainData)
+testData = pd.DataFrame(testData)
+validData = pd.DataFrame(validData)
+
 #########################################
 ###  Register Model in Model Manager  ###
-### Ensure Model Does Not Exist in MM ###
-###   Using PZMM Zips Up Metadata     ###
 #########################################
 
 import shutil
