@@ -25,7 +25,6 @@ import swat
 import pandas as pd
 
 hostname = 'https://fsbulab.unx.sas.com/cas-shared-default-http'
-#hostname = 'https://fsbupoc.eastus.cloudapp.azure.com'
 port = 443
 conn = swat.CAS(hostname, port, username, password, protocol="https")
 print(conn)

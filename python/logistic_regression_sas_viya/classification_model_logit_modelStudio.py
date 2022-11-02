@@ -18,8 +18,21 @@ import pickle
 
 ### model arugments
 logit_params = {
-                'solver': 'newton-cg'
-                }
+             'penalty': 'l2', 
+             'dual': False, 
+             'tol': 0.0001, 
+             'fit_intercept': True, 
+             'intercept_scaling': 1, 
+             'class_weight': None, 
+             'random_state': None, 
+             'solver': 'newton-cg', 
+             'max_iter': 100, 
+             'multi_class': 'auto', 
+             'verbose': 0, 
+             'warm_start': False, 
+             'n_jobs': None, 
+             'l1_ratio': None
+             } 
 
 ### model manager information
 model_name = 'logit_python_SASViya'
@@ -38,6 +51,7 @@ dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1
 dm_partition_validate_perc, dm_partition_train_perc, dm_partition_test_perc = [0.3, 0.6, 0.1]
 
 ### create list of rejected predictor columns
+    ### if already rejected in project, remove from this list
 rejected_predictors = [
     'atm_deposit_indicator', 
     'citizenship_country_risk', 

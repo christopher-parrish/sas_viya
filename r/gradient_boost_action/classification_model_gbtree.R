@@ -39,8 +39,8 @@ in_mem_tbl <- 'AML_BANK_PREP'
 
 ### load table in-memory if not already exists in-memory
 if (cas.table.tableExists(conn, caslib=caslib, name=in_mem_tbl)<=0) {
-  cas.table.loadTable(conn, caslib=caslib, path=paste(in_mem_tbl,('.sashdat')), 
-                      casout=list(name=in_mem_tbl, caslib=caslib, promote=True))}
+  cas.table.loadTable(conn, caslib=caslib, path=paste(in_mem_tbl,('.sashdat'), sep = ""), 
+                      casout=list(name=in_mem_tbl, caslib=caslib, promote=TRUE))}
 
 ### show table to verify
 cas.table.tableInfo(conn, caslib=caslib, wildIgnore=FALSE, name=in_mem_tbl)
@@ -54,7 +54,7 @@ cas_out_tbl <- paste(in_mem_tbl, '_model', sep ="")
 ### Create Dataframe ###
 ########################
 
-dm_inputdf <- defCasTable(conn, in_mem_tbl, caslib=caslib)
+dm_inputdf <- defCasTable(conn, in_mem_tbl, caslib='CASUSER(chparr)')
 
 ### print columns for review of model parameters
 cas.table.columnInfo(conn, table=list(caslib=caslib, name=in_mem_tbl))
@@ -176,6 +176,12 @@ cas.decisionTree.dtreeScore(conn,
   assessOneRow=TRUE
   )
 
+### create score code
+cas.decisionTree.gbtreeCode(conn,
+  modelTable=list(caslib=caslib, name=cas_out_tbl),
+  code=list(casOut=list(caslib=caslib, name='gbtree_scorecode', replace=TRUE, promote=FALSE))
+  )
+
 ####################
 ### Assess Model ###
 ####################
@@ -239,9 +245,3 @@ print(paste("ks=", stats['X_KS2_']), quote=FALSE)
 print(paste("auc=", stats['X_C_']), quote=FALSE)
 print(paste("cutoff=", stats['X_Cutoff_']), quote=FALSE)
 print(paste("confusion_matrix (tp, fp, tn, fn):", stats['X_TP_'], stats['X_FP_'], stats['X_TN_'], stats['X_FN_']), quote=FALSE)
-
-### create score code
-cas.decisionTree.gbtreeCode(conn,
-                            modelTable=list(caslib=caslib, name=cas_out_tbl),
-                            code=list(casOut=list(caslib=caslib, name='gbtree_scorecode', replace=TRUE, promote=FALSE))
-)

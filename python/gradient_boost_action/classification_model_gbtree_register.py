@@ -192,7 +192,7 @@ conn.percentile.assess(
   table=dict(caslib=caslib, name=cas_score_tbl),
   event="1",
   response=dm_dec_target,
-  inputs=dm_predictionvar[2],
+  inputs=dm_predictionvar[1],
   cutStep=0.0001,
   casOut=dict(caslib=caslib, name='gbtree_python_assess', replace=True)
   )
