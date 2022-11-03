@@ -1,6 +1,6 @@
 
 #####################################################
-###       Train & Publish SAS gbTree Model        ###
+###      Train & Register SAS gbTree Model        ###
 #####################################################
 
 ###################
@@ -8,6 +8,7 @@
 ###################
 
 import keyring
+import getpass
 import runpy
 import os
 from pathlib import Path
@@ -20,6 +21,9 @@ from password_poc import hostname, wd, output_dir
 runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
+# username = getpass.getpass("Username: ")
+# password = getpass.getpass("Password: ")
+# output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
 ###################
@@ -30,7 +34,7 @@ import swat
 
 port = 443
 os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert.pem')
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
+conn =  swat.CAS(hostname, port, username, password, protocol='http')
 print(conn.serverstatus())
 
 #############################
@@ -39,7 +43,7 @@ print(conn.serverstatus())
 
 ### caslib and table to use in modeling
 caslib = 'Public'
-in_mem_tbl = 'AML_BANK_PREP'
+in_mem_tbl = 'FINANCIAL_SERVICES_PREP'
 
 ### load table in-memory if not already exists in-memory
 if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
@@ -106,31 +110,41 @@ print(xgb_params)
 print(early_stop_params)
 
 ### model manager information
-model_name = 'gbtree_python'
-project_name = 'Risk Score'
-description = 'gbtree_python'
-model_type = 'gradient_boost'
+model_name = 'gbtree_action_python_finsvcs'
+project_name = 'Financial Services'
+description = 'gbtree_action'
+model_type = 'gradient_boosting'
 
 ### define macro variables for model
-dm_dec_target = 'ml_indicator'
+dm_dec_target = 'event_indicator'
 dm_partitionvar = 'analytic_partition' 
 dm_key = 'account_id' 
 dm_classtarget_level = ['0', '1']
 dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1, 2]
 
-### create list of rejected predictor columns
-rejected_predictors = [
-    'atm_deposit_indicator', 
-    'citizenship_country_risk', 
-    'distance_to_bank',
-    'distance_to_employer', 
-    'income', 
-    'num_acctbal_chgs_gt2000',
-    'occupation_risk'
+### create list of regressors
+keep_predictors = [
+    'net_worth',
+    'credit_score',
+    'num_dependents',
+    'at_current_job_1_year',
+    'credit_history_mos',
+    'job_in_education',
+    'num_transactions',
+    'debt_to_income',
+    'amount',
+    'gender',
+    'age',
+    'job_in_hospitality'
     ]
+#rejected_predictors = []
 
 ### var to consider in bias assessment
-bias_var = 'cross_border_trx_indicator'
+bias_var = 'gender'
+
+### var to consider in partial dependency
+pd_var1 = 'credit_score'
+pd_var2 = 'net_worth'
 
 ##############################
 ### Final Modeling Columns ###
@@ -139,7 +153,8 @@ bias_var = 'cross_border_trx_indicator'
 ### create list of model variables
 dm_input = list(dm_inputdf.columns.values)
 macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
-rejected_vars = rejected_predictors + macro_vars
+rejected_predictors = [i for i in dm_input if i not in keep_predictors]
+rejected_vars = rejected_predictors # + macro_vars (include macro_vars if rejected_predictors are explicitly listed - not contra keep_predictors)
 for i in rejected_vars:
     dm_input.remove(i)
 
@@ -156,7 +171,6 @@ valid_part = str(dm_partitionvar)+str('=')+str(dm_partition_validate_val)
 ### Training Code ###
 #####################
 
-### estimate & fit model
 dm_model = conn.decisionTree.gbtreeTrain(**xgb_params,
     earlyStop=early_stop_params,
     table=dict(caslib=caslib, name=in_mem_tbl, where=train_part),
@@ -168,7 +182,10 @@ dm_model = conn.decisionTree.gbtreeTrain(**xgb_params,
     saveState=dict(caslib=caslib, name=astore_tbl, replace=True)
     )
 
-### score full data
+####################
+###  Score Data  ###
+####################
+
 conn.decisionTree.dtreeScore(
     modelTable=dict(caslib=caslib, name=cas_out_tbl),
     table=dict(caslib=caslib, name=in_mem_tbl), 
@@ -178,46 +195,97 @@ conn.decisionTree.dtreeScore(
     assessOneRow=True
     )
 
-### create score code
+####################
+### Scoring Code ###
+####################
+
 conn.decisionTree.gbtreeCode(
   modelTable=dict(caslib=caslib, name=cas_out_tbl),
-  code=dict(casOut=dict(caslib=caslib, name='gbtree_scorecode', replace=True, promote=False))
+  code=dict(casOut=dict(caslib=caslib, name=(str(description)+str('_scorecode')), replace=True, promote=False))
   )
 
-####################
-### Assess Model ###
-####################
+##########################
+### Partial Dependency ###
+##########################
 
-conn.percentile.assess(
-  table=dict(caslib=caslib, name=cas_score_tbl),
-  event="1",
-  response=dm_dec_target,
-  inputs=dm_predictionvar[1],
-  cutStep=0.0001,
-  casOut=dict(caslib=caslib, name='gbtree_python_assess', replace=True)
-  )
+conn.explainModel.partialDependence (
+        table=dm_inputdf,
+        seed=12345,
+        modelTable=dict(caslib=caslib, name=astore_tbl),
+        predictedTarget=dm_predictionvar[1],
+        analysisVariable=pd_var2,
+        inputs=dm_input,
+        output=dict(casOut=dict(caslib=caslib, name='partial_dependency', replace=True))
+        )
 
-### print model & results
-print(dm_model)
-conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=astore_tbl)
-print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).Description)
-print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).InputVariables)
-print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).OutputVariables)
-print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).epcode)
-model_astore = conn.CASTable(astore_tbl, caslib=caslib)
+###################
+### SHAP Values ###
+###################
+
+import numpy as np
+conn.loadactionset('transpose')
+
+sample_size = 500
+rand_obs = np.array(dm_inputdf[dm_key].sample(n=sample_size, random_state=12345).as_matrix())
+
+for i in range(sample_size):
+    obs_num = rand_obs[i].astype(int).item()
+    shapley_temp = dm_inputdf[dm_inputdf[dm_key] == obs_num]
+    
+    conn.explainModel.shapleyExplainer(
+        table=dm_inputdf,
+        query=shapley_temp,
+        modelTable=dict(caslib=caslib, name=astore_tbl),
+        modelTableType="astore",
+        predictedTarget=dm_predictionvar[1],
+        inputs=dm_input,
+        depth=1,
+        outputTables=dict(names=dict(ShapleyValues=dict(name='shapleyvalues', caslib=caslib, replace=True)))
+        )
+    
+    conn.transpose.transpose(
+        table=dict(caslib=caslib, name="shapleyvalues"),
+        id="variable",
+        casOut=dict(caslib=caslib, name="shapley_transpose", replace=True)
+        )
+    
+    if i == 0:
+        conn.table.copyTable(
+            table=dict(caslib=caslib, name="shapley_transpose"),
+            casOut=dict(caslib=caslib, name='shapley_rows', replace=True)
+            )
+        conn.table.copyTable(
+            table=dict(caslib=caslib, name="shapleyvalues"),
+            casOut=dict(caslib=caslib, name='shapley_cols', replace=True))
+    else:
+        conn.table.append(
+            source=dict(caslib=caslib, name='shapley_transpose'),
+            target=dict(caslib=caslib, name='shapley_rows')
+            )
+        conn.table.append(
+            source=dict(caslib=caslib, name='shapleyvalues'),
+            target=dict(caslib=caslib, name='shapley_cols')
+            )
+
+shapley_rows = conn.CASTable(caslib=caslib, name='shapley_rows').to_frame()
+shapley_cols = conn.CASTable(caslib=caslib, name='shapley_cols').to_frame()
+
+### may need to unload global scope tables first and save as perm tables
+conn.table.promote(caslib=caslib, name='shapley_rows')
+conn.table.promote(caslib=caslib, name='shapley_cols')
 
 ###################
 ### Assess Bias ###
 ###################
 
 conn.fairAITools.assessBias(
-		table = dict(caslib=caslib, name=in_mem_tbl),
-		modelTable = dict(caslib=caslib, name=astore_tbl),
-		modelTableType = "ASTORE",
-		response = dm_dec_target,
-		predictedVariables = dm_predictionvar,
-		responseLevels = dm_classtarget_level,
-		sensitiveVariable = bias_var
+        table = dict(caslib=caslib, name=in_mem_tbl),
+        modelTable = dict(caslib=caslib, name=astore_tbl),
+        modelTableType = "ASTORE",
+        response = dm_dec_target,
+        predictedVariables = dm_predictionvar,
+        responseLevels = dm_classtarget_level,
+        sensitiveVariable = bias_var
         )
 
 ######################################################
@@ -226,8 +294,8 @@ conn.fairAITools.assessBias(
 
 import pandas as pd
 
-score_astore = conn.CASTable(cas_score_tbl)
-dm_scoreddf = conn.CASTable(score_astore).to_frame()
+score_astore = conn.CASTable(caslib=caslib, name=cas_score_tbl)
+dm_scoreddf = conn.CASTable(caslib=caslib, name=score_astore).to_frame()
 dm_scoreddf[dm_dec_target] = dm_scoreddf[dm_dec_target].astype(int)
 trainData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_train_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
 testData = dm_scoreddf[dm_scoreddf[dm_partitionvar]==dm_partition_test_val][[dm_dec_target, dm_predictionvar[1]]].rename(columns=lambda x:'0')
@@ -240,11 +308,15 @@ validData = pd.DataFrame(validData)
 ###  Register Model in Model Manager  ###
 #########################################
 
-import shutil
-from sasctl import pzmm as pzmm
+from pathlib import Path
 from sasctl import Session
-from sasctl import register_model, publish_model
+from sasctl import pzmm as pzmm
+from sasctl.tasks import register_model, publish_model
 from sasctl._services.model_repository import ModelRepository as mr
+import shutil
+
+### define macro vars for model manager
+target_event = dm_classtarget_level[1]
 
 ### create session in cas
 sess=Session(hostname, username=username, password=password, verify_ssl=False, protocol="http")
@@ -253,17 +325,21 @@ sess=Session(hostname, username=username, password=password, verify_ssl=False, p
 output_path = Path(output_dir) / metadata_output_dir / model_name
 if output_path.exists() and output_path.is_dir():
     shutil.rmtree(output_path)
+
+### create output path
 os.makedirs(output_path)
 
 ### create metadata and import to model manager
 pzmm.JSONFiles().calculateFitStat(trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
-pzmm.JSONFiles().generateROCLiftStat(dm_dec_target, int(dm_classtarget_level[1]), conn, trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
+pzmm.JSONFiles().generateROCLiftStat(dm_dec_target, int(target_event), conn, trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
 file_list = os.listdir(output_path)
 files = []
 for i in file_list:
-    new_dict = {'name':i, 'file':open(output_path / i)}
+    new_dict = {'name':i, 'file':open(output_path / i), 'role':'Properties and Metadata'}
     files.append(new_dict)
 with sess:
     reg_model = register_model(model_astore, model_name, project_name, files=files, force=True, version='latest')
+    for file in files:
+        mr.add_model_content(model_name, **file)
 #   pub_model = publish_model(model_name, 'maslocal')
 #   score_example = pub_model.score(input1=1, input2=2, etc.)
