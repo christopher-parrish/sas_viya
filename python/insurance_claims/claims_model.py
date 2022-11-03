@@ -6,15 +6,23 @@
 ### Credentials ###
 ###################
 
+import keyring
 import getpass
 import runpy
 import os
+from pathlib import Path
 import urllib3
 urllib3.disable_warnings()
 
-username = getpass.getpass("Username: ")
-password = getpass.getpass("Password: ")
-output_dir = os.getcwd()
+### run script that contains username, password, hostname, working directory, and output directory
+    ### ...OR define directly in this script
+from password_poc import hostname, wd, output_dir
+runpy.run_path(path_name='password.py')
+username = keyring.get_password('cas', 'username')
+password = keyring.get_password('cas', username)
+# username = getpass.getpass("Username: ")
+# password = getpass.getpass("Password: ")
+# output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
 ###################
