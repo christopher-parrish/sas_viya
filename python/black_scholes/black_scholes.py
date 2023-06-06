@@ -1,4 +1,7 @@
-#%%
+#################################################
+###  Register Python Black-Scholes Non-Model  ###
+#################################################
+
 ###################
 ### Credentials ###
 ###################
@@ -7,29 +10,40 @@ import keyring
 import runpy
 import os
 
-### run script that contains username, password, hostname, and working directory
+### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, output_dir, wd
-runpy.run_path(os.path.join(wd, 'password_poc.py'))
+from password import hostname, port, protocol, wd, output_dir, hostname_dev, port_dev, protocol_dev
+
+runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
+metadata_output_dir = 'outputs'
 
 ###################
 ### Environment ###
 ###################
 
 import swat
+import pandas as pd
 
-port = 443
-cert_path = str(wd)+str('/ca_cert_poc.pem')
-os.environ['CAS_CLIENT_SSL_CA_LIST']=cert_path
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
-#print(conn)
-#print(conn.serverstatus())
+conn =  swat.CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
+print(conn.serverstatus())
 
-### caslib and table to use in scoring
+#############################
+### Identify Table in CAS ###
+#############################
+
+### caslib and table to use in modeling
 caslib = 'Public'
-in_mem_tbl = 'black_scholes_score'
+in_mem_tbl = 'BLACK_SCHOLES'
+
+### load table in-memory if not already exists in-memory
+if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
+    conn.table.loadTable(caslib=caslib, path=str(in_mem_tbl+str('.sashdat')), 
+                         casout={'name':in_mem_tbl, 'caslib':caslib, 'promote':True})
+
+### show table to verify
+conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
 
 ########################
 ### Model Parameters ###
@@ -42,16 +56,16 @@ import sys
 from datetime import datetime
 
 ### model manager information
-model_name = 'DEMO_black_scholes_python'
-score_code_name = 'DEMO_black_scholes_pythonScore.py'
-project_name = 'Black_Scholes_Option'
+model_name = 'black_scholes_python'
+score_code_name = 'black_scholes_pythonScore.py'
+project_name = 'black_scholes'
 description = 'UDF'
 model_type = 'UDF'
 metadata_output_dir = 'outputs'
 dm_dec_target = 'option_val'
 python_version = sys.version
 timestamp = str(datetime.now())
-#%%
+
 #########################
 ### Create json Files ###
 #########################
@@ -222,7 +236,7 @@ columns_x = ['notional', 'vol', 'strike_price', 'spot_price', 'time_to_mat', 'ri
 X = pd.DataFrame(data_x, columns=columns_x)
 if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
     conn.upload(data=X, casOut={"caslib":caslib, "name":in_mem_tbl, "promote":True})
-#%%
+
 #########################################
 ### Zip Files & Send to Model Manager ###
 #########################################

@@ -1,19 +1,27 @@
-#####################################################
-###      Train & Register Scikit Logit Model      ###
-#####################################################
+####################################################
+###  Train & Register Python Scikit Logit Model  ###
+####################################################
 
 ###################
 ### Credentials ###
 ###################
 
+import keyring
 import getpass
 import runpy
 import os
+from pathlib import Path
 import urllib3
 urllib3.disable_warnings()
 
-username = getpass.getpass("Username: ")
-password = getpass.getpass("Password: ")
+### run script that contains username, password, hostname, working directory, and output directory
+    ### ...OR define directly in this script
+from password import hostname, port, wd, output_dir
+runpy.run_path(path_name='password.py')
+username = keyring.get_password('cas', 'username')
+password = keyring.get_password('cas', username)
+# username = getpass.getpass("Username: ")
+# password = getpass.getpass("Password: ")
 output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
@@ -24,9 +32,7 @@ metadata_output_dir = 'outputs'
 import swat
 import pandas as pd
 
-hostname = 'https://fsbulab.unx.sas.com/cas-shared-default-http'
-port = 443
-conn = swat.CAS(hostname, port, username, password, protocol="https")
+conn = swat.CAS(hostname, port, username, password, protocol="cas") # protocol="https"
 print(conn)
 print(conn.serverstatus())
 
@@ -53,6 +59,7 @@ conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
 dm_inputdf =  conn.CASTable(in_mem_tbl, caslib=caslib).to_frame()
 
 ### read csv from defined 'data_dir' directory
+#data_dir = 'C:/'
 #dm_inputdf = pd.read_csv(str(data_dir)+str('/')+in_mem_tbl+str('.csv'))
 
 ### print columns for review of model parameters
@@ -261,7 +268,7 @@ with open(str(output_path)+str('/requirements.json'), 'w') as outfile:
     outfile.write(requirementsObj)
 
 ### create metadata and import to model manager
-pzmm.PickleModel.pickleTrainedModel(_, dm_model, model_name, output_path)
+pzmm.PickleModel.pickle_trained_model(dm_model, model_name, output_path)
 pzmm.JSONFiles().writeVarJSON(input_vars, isInput=True, jPath=output_path)
 pzmm.JSONFiles().writeVarJSON(output_vars, isInput=False, jPath=output_path)
 pzmm.JSONFiles().calculateFitStat(trainData=trainData, testData=testData, validateData=validData, jPath=output_path)

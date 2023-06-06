@@ -15,7 +15,7 @@ urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, wd
+from password import hostname, port, protocol, wd
 runpy.run_path(os.path.join(wd, 'password_poc.py'))
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
@@ -27,11 +27,8 @@ password = keyring.get_password('cas', username)
 import swat
 import pandas as pd
 
-port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert_poc.pem')
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
-#print(conn)
-#print(conn.serverstatus())
+conn =  swat.CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
+print(conn)
 
 #############################
 ### Identify Table in CAS ###

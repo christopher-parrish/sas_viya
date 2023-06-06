@@ -10,7 +10,7 @@
     "targetEvent": "1",
     "targetLevel": "BINARY",
     "eventProbVar": "EM_EVENTPROBABILITY",
-    "modeler": "chparr",
+    "modeler": "cp",
     "tool": "Python 3",
     "toolVersion": "3.8.8"
 }

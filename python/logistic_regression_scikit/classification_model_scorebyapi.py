@@ -3,21 +3,32 @@
 ###      Score Classification Model by API       ###
 ####################################################
 
-
 ###################
 ### Credentials ###
 ###################
 
-import getpass
+import keyring
 import runpy
 import os
-import urllib3
-urllib3.disable_warnings()
 
-username = getpass.getpass("Username: ")
-password = getpass.getpass("Password: ")
-hostname_model = 'https://fsbulab.unx.sas.com/'
-port = 443
+### run script that contains username, password, hostname, working directory, and output directory
+    ### ...OR define directly in this script
+from password import hostname, port, wd, output_dir
+
+#runpy.run_path(path_name='password.py')
+username = keyring.get_password('cas', 'username')
+password = keyring.get_password('cas', username)
+metadata_output_dir = 'outputs'
+
+###################
+### Environment ###
+###################
+
+import swat
+import pandas as pd
+
+conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
+print(conn.serverstatus())
 
 #################
 ### Get Token ###

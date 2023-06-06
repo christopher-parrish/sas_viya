@@ -8,17 +8,22 @@
 ###################
 
 import keyring
+import getpass
 import runpy
 import os
+from pathlib import Path
 import urllib3
 urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, output_dir, wd
-runpy.run_path(path_name='password_poc.py')
+from password import hostname, port, wd, output_dir
+runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
+# username = getpass.getpass("Username: ")
+# password = getpass.getpass("Password: ")
+output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
 ###################
@@ -28,9 +33,7 @@ metadata_output_dir = 'outputs'
 import swat
 import pandas as pd
 
-port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert_poc.pem')
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
+conn = swat.CAS(hostname, port, username, password, protocol="cas")
 print(conn)
 print(conn.serverstatus())
 
@@ -57,6 +60,7 @@ conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
 dm_inputdf =  conn.CASTable(in_mem_tbl, caslib=caslib).to_frame()
 
 ### read csv from defined 'data_dir' directory
+#data_dir = 'C:/'
 #dm_inputdf = pd.read_csv(str(data_dir)+str('/')+in_mem_tbl+str('.csv'))
 
 ### print columns for review of model parameters

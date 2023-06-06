@@ -15,8 +15,9 @@ urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, output_dir, wd
-runpy.run_path(path_name='password_poc.py')
+from password import hostname, port, wd, output_dir, hostname_dev, port_dev
+
+#runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
 metadata_output_dir = 'outputs'
@@ -28,10 +29,10 @@ metadata_output_dir = 'outputs'
 import swat
 import pandas as pd
 
-port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert_poc.pem')
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='http')
-print(conn)
+#os.environ['CAS_CLIENT_SSL_CA_LIST'] = "C:\\Users\\chparr\\OneDrive - SAS\\sas_viya_cl_executable\\trustedcerts.pem"
+#conn = swat.CAS(hostname_dev, port_dev, username, password, protocol='https')
+
+conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
 print(conn.serverstatus())
 
 #############################

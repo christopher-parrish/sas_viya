@@ -17,13 +17,10 @@ urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password_poc import hostname, wd, output_dir
-runpy.run_path(path_name='password.py')
+from password import hostname, port, wd, output_dir
+#runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
-# username = getpass.getpass("Username: ")
-# password = getpass.getpass("Password: ")
-# output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
 ###################
@@ -31,10 +28,9 @@ metadata_output_dir = 'outputs'
 ###################
 
 import swat
+import pandas as pd
 
-port = 443
-os.environ['CAS_CLIENT_SSL_CA_LIST']=str(wd)+str('/ca_cert.pem')
-conn =  swat.CAS(hostname, port, username, password, protocol='http')
+conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
 print(conn.serverstatus())
 
 #############################
@@ -62,7 +58,7 @@ cas_out_tbl = str(in_mem_tbl+str('_model'))
 ### Create Dataframe ###
 ########################
 
-dm_inputdf =  conn.CASTable(in_mem_tbl, caslib=caslib)
+dm_inputdf = conn.CASTable(in_mem_tbl, caslib=caslib)
 
 ### print columns for review of model parameters
 conn.table.columnInfo(table={"caslib":caslib, "name":in_mem_tbl})
@@ -122,23 +118,6 @@ dm_key = 'account_id'
 dm_classtarget_level = ['0', '1']
 dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1, 2]
 
-### create list of regressors
-keep_predictors = [
-    'net_worth',
-    'credit_score',
-    'num_dependents',
-    'at_current_job_1_year',
-    'credit_history_mos',
-    'job_in_education',
-    'num_transactions',
-    'debt_to_income',
-    'amount',
-    'gender',
-    'age',
-    'job_in_hospitality'
-    ]
-#rejected_predictors = []
-
 ### var to consider in bias assessment
 bias_var = 'gender'
 
@@ -153,8 +132,24 @@ pd_var2 = 'net_worth'
 ### create list of model variables
 dm_input = list(dm_inputdf.columns.values)
 macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
+keep_predictors = [
+    'net_worth',
+    'credit_score',
+    'num_dependents',
+    'at_current_job_1_year',
+    'credit_history_mos',
+    'job_in_education',
+    'num_transactions',
+    'debt_to_income',
+    'amount',
+    'gender',
+    'age',
+    'job_in_hospitality'
+    ]
+#keep_predictors = [i for i in dm_input if i not in macro_vars]
+#rejected_predictors = []
 rejected_predictors = [i for i in dm_input if i not in keep_predictors]
-rejected_vars = rejected_predictors # + macro_vars (include macro_vars if rejected_predictors are explicitly listed - not contra keep_predictors)
+rejected_vars = rejected_predictors # + macro_vars
 for i in rejected_vars:
     dm_input.remove(i)
 
@@ -230,6 +225,7 @@ rand_obs = np.array(dm_inputdf[dm_key].sample(n=sample_size, random_state=12345)
 
 for i in range(sample_size):
     obs_num = rand_obs[i].astype(int).item()
+    obs_num = 136
     shapley_temp = dm_inputdf[dm_inputdf[dm_key] == obs_num]
     
     conn.explainModel.shapleyExplainer(
