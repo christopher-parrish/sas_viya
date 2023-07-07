@@ -21,7 +21,7 @@ metadata_output_dir <- 'outputs'
 
 library(swat)
 
-conn <- swat::CAS(hostname=hostname_dev, port=port_dev, username, password, protocol=protocol_dev)
+conn <- swat::CAS(hostname=hostname, port=port, username, password, protocol=protocol)
 print(cas.builtins.serverStatus(conn))
 
 #############################
@@ -465,7 +465,7 @@ cas.sampling.srs(conn,
                  table=list(caslib=caslib, name=in_mem_tbl),
                  output=list(casOut=list(name='sample_out', replace=TRUE), copyVars=list(dm_key)),
 )
-rand_obs <- array(to.casDataFrame(defCasTable(conn, caslib=caslib, table='sample_out')))
+rand_obs <- array(to.casDataFrame(defCasTable(conn, table='sample_out')))
 shapley_rows_tbl <- paste(model_name, "_", "shapley_rows", sep="")
 shapley_cols_tbl <- paste(model_name, "_", "shapley_cols", sep="")
 
@@ -603,7 +603,7 @@ as.casTable(conn, bias_metrics_all, casOut=list(caslib='casuser', name=bias_metr
 ###   calculated on the sensitive variable(s) in the mitigate_var list
 
 ### model arguments
-### the 'trainProgram parameter is CASL, not R or Python
+### the 'trainProgram' parameter is CASL, not R or Python API
 
 event <- 'LAST'
 selection_method <- 'STEPWISE'

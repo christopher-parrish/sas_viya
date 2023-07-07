@@ -1,0 +1,38 @@
+[
+    {
+        "name": "notional",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    },
+    {
+        "name": "vol",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    },
+    {
+        "name": "strike_price",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    },
+    {
+        "name": "spot_price",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    },
+    {
+        "name": "time_to_mat",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    },
+    {
+        "name": "risk_free_rate",
+        "length": 8,
+        "type": "decimal",
+        "level": "interval"
+    }
+]
