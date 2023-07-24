@@ -300,6 +300,15 @@ trainData = pd.DataFrame(trainData)
 testData = pd.DataFrame(testData)
 validData = pd.DataFrame(validData)
 
+### print model & results
+print(dm_model)
+conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=astore_tbl)
+print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).Description)
+print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).InputVariables)
+print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).OutputVariables)
+print(conn.astore.describe(rstore=dict(name=astore_tbl, caslib=caslib), epcode=True).epcode)
+model_astore = conn.CASTable(astore_tbl, caslib=caslib)
+
 #########################################
 ###  Register Model in Model Manager  ###
 #########################################

@@ -23,7 +23,7 @@ with open(settings.pickle_path + dm_pklname, 'rb') as f:
 	model = pickle.load(f)
 
 def score_method(net_worth, credit_score, num_dependents, at_current_job_1_year, credit_history_mos, job_in_education, num_transactions, debt_to_income, amount, gender, age, job_in_hospitality):
-	"Output: P_ml_indicator0, P_ml_indicator1, I_ml_indicator"
+	"Output: P_event_indicator0, P_event_indicator1, I_event_indicator"
 	df = pd.DataFrame([[net_worth, credit_score, num_dependents, at_current_job_1_year, credit_history_mos, job_in_education, num_transactions, debt_to_income, amount, gender, age, job_in_hospitality]], 
 	columns=['net_worth',
     'credit_score',
