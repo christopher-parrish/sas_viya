@@ -25,6 +25,7 @@ allows the user to view tables generated as part of the code the under
 cas casauto sessopts=(caslib=casuser, metrics=true, timeout=900);
 libname chris cas caslib=casuser;
 
+
 /* set macro variables */
 
 %let in_mem_tbl = 'financial_services_prep';
