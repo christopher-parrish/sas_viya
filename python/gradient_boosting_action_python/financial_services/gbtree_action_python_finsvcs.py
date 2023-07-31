@@ -8,8 +8,6 @@
 ###################
 
 import keyring
-import getpass
-import runpy
 import os
 from pathlib import Path
 import urllib3
@@ -29,8 +27,11 @@ metadata_output_dir = 'outputs'
 
 import swat
 import pandas as pd
+from casauth import CASAuth
 
 conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
+### ssemonthly connection
+conn = CASAuth(r"C:/Users/chparr/OneDrive - SAS/certificates", ssl_ca_list=r"C:/Users/chparr/OneDrive - SAS/certificates/SSEMonthly-2022.pem")
 print(conn.serverstatus())
 
 #############################
