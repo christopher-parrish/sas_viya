@@ -121,6 +121,12 @@ proc cas;
 	;
 run;
 
+proc cas;
+	aStore.describe result=R /
+      rstore={name='gbtree_sas_astore'};
+		describe R;
+		saveresult R["InputVariables"] casout='gbtree_sas_model_inputs';
+run;
 
 /* assess model */
 
