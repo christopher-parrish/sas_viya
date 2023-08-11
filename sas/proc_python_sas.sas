@@ -91,6 +91,10 @@ proc cas;
 	;
 run;
 
+/*########################
+  ### Score New Table  ###
+  ########################*/
+
 proc cas;
 
 	decisionTree.gbtreeScore /
@@ -102,6 +106,10 @@ proc cas;
 		assessOneRow=TRUE
 	;
 run;
+
+/*########################
+  ###   Assess Model   ###
+  ########################*/
 
 proc cas;
 	percentile.assess /
