@@ -95,7 +95,11 @@ proc cas;
 run;
 
 /*########################
+<<<<<<< HEAD:sas/procpython_sas_finsvcs.sas
   ###   Score Model    ###
+=======
+  ### Score New Table  ###
+>>>>>>> 94372a8f81d13eddac37b6c9aaf4663911449262:sas/proc_python_sas.sas
   ########################*/
 
 proc cas;

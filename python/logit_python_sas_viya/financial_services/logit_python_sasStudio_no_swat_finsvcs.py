@@ -177,3 +177,5 @@ if model_type == 'logistic_regression':
     print(dm_model.intercept_)
     print('odds_ratios:')
     print(c3)
+
+SAS.df2sd(dm_scoreddf, "python_score")
