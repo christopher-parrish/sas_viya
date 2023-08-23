@@ -2,58 +2,62 @@
   ### SAS CODE ###
   ################*/
 
-cas casauto sessopts=(caslib=public, metrics=true, timeout=900);
-libname cp cas sessref=casauto;
+  cas casauto sessopts=(caslib=casuser, metrics=true, timeout=900);
+  libname cp cas caslib=casuser;
+  caslib _all_ assign;
 
 /*###########################
   ### Set Macro Variables ###
   ###########################*/
-
-%let in_mem_tbl = 'aml_bank_prep';
+  
+%let in_mem_tbl = 'financial_services_prep';
 %let caslib_ref = 'public';
-%let libname_in_mem_tbl = public.aml_bank_prep;
-%let target = 'ml_indicator';
-%let predictedtarget = 'P_ml_indicator1';
-%let inputs = {
-			"checking_only_indicator", "prior_ctr_indicator", "address_change_2x_indicator",
-			"cross_border_trx_indicator", "in_person_contact_indicator",
-			"linkedin_indicator", "atm_deposit_indicator", "trx_10ksum_indicator",
-			"common_merchant_indicator", "direct_deposit_indicator", "marital_status",
-			"primary_transfer_cat", "citizenship_country_risk", "occupation_risk", 
-			"credit_score", "distance_to_bank", "distance_to_employer", 
-			"income", "num_acctbal_chgs_gt2000", "num_transactions"};
-%let bias_var = "cross_border_trx_indicator";
+%let model_name = 'gbtree_finsvcs';
+%let libname_in_mem_tbl = public.financial_services_prep;
+%let target = 'event_indicator';
+%let predictedtarget = 'P_event_indicator1';
+%let excluded_cols = {"event_indicator", "analytic_partition", "account_id",
+		"id_important_activity", "id_direct_contact", "id_current_fs_relationship"};
+%let astore_tbl = &model_name || '_astore';
+%let model_tbl = &model_name || '_model';
+%let score_tbl = &model_name || '_score';
+%let scorecode_tbl = &model_name || '_scorecode';
+%let assess_tbl = &model_name || '_assess';
+%let assess_roc_tbl = &model_name || '_assess_roc';
 
 /*#############################
   ### Identify Table in CAS ###
   #############################*/
 
-proc cas;
-		table.tableExists result=code /
-			caslib=&caslib_ref, name=&in_mem_tbl;
-			if code['exists'] <= 0 then do;
-				table.loadTable /
-					caslib=&caslib_ref,
-					path=cats(&in_mem_tbl,'.sashdat'),
-					casout={caslib=&caslib_ref,
-						name=&in_mem_tbl,
-						promote=TRUE};
-			end;
-		table.columnInfo result=col_list /
-			table={caslib=&caslib_ref, name=&in_mem_tbl};
-			describe col_list;
-			print col_list.ColumnInfo[,'Column'];
-run;
+  proc cas;
+	table.tableExists result=code /
+		caslib=&caslib_ref, name=&in_mem_tbl;
+		if code['exists'] <= 0 then do;
+			table.loadTable /
+				caslib=&caslib_ref,
+				path=cats(&in_mem_tbl,'.sashdat'),
+				casout={caslib=&caslib_ref,
+					name=&in_mem_tbl,
+					promote=TRUE};
+		end;
+	table.columnInfo result=col_list /
+		table={caslib=&caslib_ref, name=&in_mem_tbl};
+		describe col_list;
+		print col_list.ColumnInfo[,'Column'];
 
 /*########################
   ### Model Parameters ###
   ########################*/
 
-proc cas;
+  proc cas;
+	table.columnInfo result=C /
+		table={caslib=&caslib_ref, name=&in_mem_tbl};
+		inputs = C.ColumnInfo[,'Column'];
+		inputs = inputs - &excluded_cols;
 	decisionTree.gbtreeTrain /
 		table={caslib=&caslib_ref, name=&in_mem_tbl}
 		target=&target
-		inputs=&inputs
+		inputs=inputs
 		encodeName=TRUE
 		nominals={&target}
 		m=20
@@ -73,44 +77,51 @@ proc cas;
 		quantileBin=TRUE
 		earlyStop={metric="MCR", stagnation=5, tolerance=0, minimum=FALSE,
 					threshold=0, thresholdIter=0}
-		casOut={caslib=&caslib_ref, name="casgradboost_model", replace=True}
-		saveState={caslib=&caslib_ref, name="casgradboost_astore", replace=True}
+		casOut={name=&model_tbl, replace=True}
+		saveState={name=&astore_tbl, replace=True}
     	;
 run;
 
-/*########################
+*########################
   ### Write Score Code ###
   ########################*/
 
 proc cas;
 
 	decisionTree.gbtreeCode /
-		modelTable={name="casgradboost_model"}
-		code={casOut={caslib=&caslib_ref, name='casgradboost_scorecode', 
-						replace=True, promote=False}}
+		modelTable={name=&model_tbl}
+		code={casOut={name=&scorecode_tbl, replace=True, promote=False}}
 	;
 run;
+
+/*########################
+  ###   Score Model    ###
+  ########################*/
 
 proc cas;
 
 	decisionTree.gbtreeScore /
-		modelTable={name="casgradboost_model"}
+		modelTable={name=&model_tbl}
 		table={caslib=&caslib_ref, name=&in_mem_tbl}
-		casOut={caslib=&caslib_ref, name='casgradboost_scored', replace=True}
+		casOut={name=&score_tbl, replace=True}
 		copyVars={&target}
 		encodeName=TRUE
 		assessOneRow=TRUE
 	;
 run;
 
+/*########################
+  ###   Assess Model   ###
+  ########################*/
+
 proc cas;
 	percentile.assess /
-		table={caslib=&caslib_ref, name="casgradboost_scored"}
+		table={name=&score_tbl}
 		event="1"
 		response=&target
 		inputs=&predictedtarget
 		cutStep=0.001
-		casOut={caslib=&caslib_ref, name='casgradboost_assess', replace=True}
+		casOut={name=&assess_tbl, replace=True}
 	;
 run;
 
@@ -140,7 +151,7 @@ proc cas;
 			if code['exists'] = 2 then do;
 			print "The CAS table has a global scope";
 			end;
-quit;
+run;
 
 
 /*###################

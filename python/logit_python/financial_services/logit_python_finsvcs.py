@@ -12,7 +12,7 @@ import os
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password import hostname, port, protocol, wd, output_dir, hostname_dev, port_dev, protocol_dev
+from password import hostname, port, protocol, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse
 
 runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
@@ -24,9 +24,11 @@ metadata_output_dir = 'outputs'
 ###################
 
 import swat
+from casauth import CASAuth
 import pandas as pd
 
 conn =  swat.CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
+#conn = CASAuth(cert_dir, ssl_ca_list=token_sse)
 print(conn.serverstatus())
 
 #############################
