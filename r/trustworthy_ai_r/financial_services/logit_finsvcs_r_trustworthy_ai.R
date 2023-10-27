@@ -22,7 +22,7 @@ metadata_output_dir <- 'outputs'
 library(swat)
 
 #conn <- swat::CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
-conn <- CAS(hostname_sse, password=token_sse, protocol=protocol_sse)
+conn <- CAS(hostname_sse, password=token_sse_refresh, protocol=protocol_sse) # password=token_sse
 print(cas.builtins.serverStatus(conn))
 
 #############################

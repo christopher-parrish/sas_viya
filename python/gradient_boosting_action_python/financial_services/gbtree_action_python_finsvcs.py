@@ -11,12 +11,14 @@ import keyring
 import os
 from pathlib import Path
 import urllib3
+import runpy
 urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password import hostname, port, wd, output_dir
-#runpy.run_path(path_name='password.py')
+from password import hostname_cas, hostname_http, port_cas, port_http, protocol_cas, protocol_http, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse, token_sse_refresh, token_sse_pem, hostname_sse, session_sse
+
+runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
 metadata_output_dir = 'outputs'
@@ -29,9 +31,11 @@ import swat
 import pandas as pd
 from casauth import CASAuth
 
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
-### ssemonthly connection
-conn = CASAuth(r"C:/Users/chparr/OneDrive - SAS/certificates", ssl_ca_list=r"C:/Users/chparr/OneDrive - SAS/certificates/SSEMonthly-2022.pem")
+conn =  swat.CAS(hostname=hostname_cas, port=port_cas, username=username, password=password, protocol=protocol_cas)
+### ssemonthly connection ###
+#access_token = open(token_sse, "r").read()
+#conn =  swat.CAS(hostname=hostname_sse, username=None, password=access_token, ssl_ca_list=token_sse_pem, protocol=protocol_http)
+#conn = CASAuth(cert_dir, ssl_ca_list=token_sse_pem)
 print(conn.serverstatus())
 
 #############################
