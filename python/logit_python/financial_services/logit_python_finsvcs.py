@@ -9,10 +9,11 @@
 import keyring
 import runpy
 import os
+from pathlib import Path
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password import hostname, port, protocol, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse
+from password import hostname_cas, hostname_http, port_cas, port_http, protocol_cas, protocol_http, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse, token_sse_refresh, token_sse_pem, hostname_sse, session_sse
 
 runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
@@ -27,8 +28,11 @@ import swat
 from casauth import CASAuth
 import pandas as pd
 
-conn =  swat.CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
-#conn = CASAuth(cert_dir, ssl_ca_list=token_sse)
+#conn =  swat.CAS(hostname=hostname_cas, port=port_cas, username=username, password=password, protocol=protocol_cas)
+### ssemonthly connection ###
+access_token = open(token_sse, "r").read()
+#conn =  swat.CAS(hostname=hostname_sse, username=None, password=access_token, ssl_ca_list=token_sse_pem, protocol=protocol_http)
+conn = CASAuth(cert_dir, ssl_ca_list=token_sse_pem)
 print(conn.serverstatus())
 
 #############################
@@ -89,8 +93,8 @@ logit_params = {
 print(logit_params)
 
 ### model manager information
-model_name = 'BIGDEMO_logit_python_finsvcs'
-project_name = 'Financial Services'
+model_name = 'logit_python_finsvcs'
+project_name = 'Credit Default'
 description = 'Logistic Regression'
 model_type = 'logistic_regression'
 predict_syntax = 'predict_proba'
@@ -257,7 +261,7 @@ predict_method = str('{}.')+str(predict_syntax)+str('({})')
 output_vars = pd.DataFrame(columns=class_labels, data=[[0.5, 'A']])
 
 ### create session in cas
-sess=Session("fsbulab.unx.sas.com", username=username, password=password, verify_ssl=False, protocol="https")
+sess = Session(hostname=session_sse, token=access_token, client_id='ssemonthly', client_secret='access_token')
 
 11### create directories for metadata
 output_path = Path(output_dir) / metadata_output_dir / model_name
