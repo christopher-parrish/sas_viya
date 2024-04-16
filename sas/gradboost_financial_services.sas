@@ -3,8 +3,8 @@ cas casauto sessopts=(caslib=PUBLIC, metrics=true, timeout=900);
 /* set macro variables */
 
 %let in_mem_tbl = 'financial_services_prep';
-%let caslib_ref = 'public';
-%let libname_in_mem_tbl = public.financial_services_prep;
+%let caslib_ref = 'casuser';
+%let libname_in_mem_tbl = casuser.financial_services_prep;
 %let target = 'event_indicator';
 %let target_noquote = event_indicator;
 %let predicted = P_event_indicator;
@@ -55,7 +55,7 @@ run;
 /* proc gradboost procedure */
 
 proc gradboost data=&libname_in_mem_tbl
-		outmodel=public.procgradboost_model
+		outmodel=casuser.procgradboost_model
 		seed=12345
      	ntrees=100
 		learningrate=0.1 
@@ -79,9 +79,9 @@ proc gradboost data=&libname_in_mem_tbl
 		partition rolevar=&partition (train='1' validate='0' test='2');
 		input &inputs_noquoteorcomma / level=interval; 		
 		target &target_noquote / level=nominal;
-		output out=public.gradboost_score 
+		output out=casuser.gradboost_score 
 					copyvars=(&copyvarstooutput);
-		savestate rstore=public.procgradboost_astore;
+		savestate rstore=casuser.procgradboost_astore;
 		ods output
 			VariableImportance=work.varimportance
 			Fitstatistics=work.fitstatistics;
