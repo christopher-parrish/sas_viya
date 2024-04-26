@@ -10,15 +10,18 @@ import keyring
 import runpy
 import os
 from pathlib import Path
+import sys
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password import hostname_cas, hostname_http, port_cas, port_http, protocol_cas, protocol_http, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse, token_sse_refresh, token_sse_pem, hostname_sse, session_sse
+sys.path.append('C:/Users/chparr/OneDrive - SAS/credentials')
+from credentials import hostname, session, port, protocol, wd, output_dir, git_dir, token_dir, token, token_refresh, token_pem
 
-runpy.run_path(path_name='password.py')
+runpy.run_path(path_name=credentials_file)
 username = keyring.get_password('cas', 'username')
-password = keyring.get_password('cas', username)
 metadata_output_dir = 'outputs'
+
+print (os.getcwd())
 
 ###################
 ### Environment ###
@@ -28,19 +31,21 @@ import swat
 from casauth import CASAuth
 import pandas as pd
 
-#conn =  swat.CAS(hostname=hostname_cas, port=port_cas, username=username, password=password, protocol=protocol_cas)
-### ssemonthly connection ###
-access_token = open(token_sse, "r").read()
-#conn =  swat.CAS(hostname=hostname_sse, username=None, password=access_token, ssl_ca_list=token_sse_pem, protocol=protocol_http)
-conn = CASAuth(cert_dir, ssl_ca_list=token_sse_pem)
+access_token = open(token, "r").read()
+conn =  swat.CAS(hostname=hostname, username=None, password=access_token, ssl_ca_list=token_pem, protocol=protocol)
+
+access_token = open(token, "r").read()
+conn = CASAuth(token_dir, ssl_ca_list=token_pem)
 print(conn.serverstatus())
+
+
 
 #############################
 ### Identify Table in CAS ###
 #############################
 
 ### caslib and table to use in modeling
-caslib = 'Public'
+caslib = 'finbank'
 in_mem_tbl = 'FINANCIAL_SERVICES_PREP'
 
 ### load table in-memory if not already exists in-memory
@@ -94,9 +99,10 @@ print(logit_params)
 
 ### model manager information
 model_name = 'logit_python_finsvcs'
-project_name = 'Credit Default'
+project_name = 'Financial Services'
 description = 'Logistic Regression'
 model_type = 'logistic_regression'
+model_function = 'Classification'
 predict_syntax = 'predict_proba'
 
 ### define macro variables for model
@@ -132,7 +138,7 @@ mlflow_class_labels =['TENSOR']
 mlflow_predict_syntax = 'predict'
 
 ### var to consider in bias assessment
-bias_var = 'gender'
+bias_vars = ['gender']
 
 ### var to consider in partial dependency
 pd_var1 = 'credit_score'
@@ -195,15 +201,25 @@ fully = dm_inputdf[dm_dec_target]
 #plot_roc_curve(dm_model, fullX, fully)
 dm_scoreddf_prob = pd.DataFrame(dm_model.predict_proba(fullX), columns=dm_predictionvar)
 dm_scoreddf_class = pd.DataFrame(dm_model.predict(fullX), columns=[dm_classtarget_intovar])
+columns_actual = bias_vars + [dm_dec_target]
+dm_scoreddf_bias = pd.DataFrame(dm_inputdf, columns=columns_actual)
 dm_scoreddf = pd.concat([dm_scoreddf_prob, dm_scoreddf_class], axis=1)
+scored = pd.concat([dm_scoreddf, dm_scoreddf_bias], axis=1)
+
 
 ### create tables with predicted values
 trainProba = dm_model.predict_proba(X_train)
+trainProbaLabel = dm_model.predict(X_train)
 testProba = dm_model.predict_proba(X_test)
+testProbaLabel = dm_model.predict(X_test)
 validProba = dm_model.predict_proba(X_valid)
-trainData = pd.concat([y_train.reset_index(drop=True), pd.Series(data=trainProba[:,1])], axis=1)
-testData = pd.concat([y_test.reset_index(drop=True), pd.Series(data=testProba[:,1])], axis=1)
-validData = pd.concat([y_valid.reset_index(drop=True), pd.Series(data=validProba[:,1])], axis=1)
+validProbaLabel = dm_model.predict(X_valid)
+trainData = pd.concat([y_train.reset_index(drop=True), pd.Series(data=trainProbaLabel), pd.Series(data=trainProba[:,1])], axis=1)
+testData = pd.concat([y_test.reset_index(drop=True), pd.Series(data=testProbaLabel), pd.Series(data=testProba[:,1])], axis=1)
+validData = pd.concat([y_valid.reset_index(drop=True), pd.Series(data=validProbaLabel), pd.Series(data=validProba[:,1])], axis=1)
+trainData.columns = ['actual', 'predict', 'probability']
+testData.columns = ['actual', 'predict', 'probability']
+validData.columns = ['actual', 'predict', 'probability']
 
 ### print model & results
 predictions = dm_model.predict(X_test)
@@ -242,7 +258,6 @@ print(c)
 ##### Using PZMM Zips Up Metadata #####
 #######################################
 
-from pathlib import Path
 from sasctl import Session
 import sasctl.pzmm as pzmm
 from sasctl.services import model_repository as modelRepo 
@@ -251,19 +266,26 @@ import shutil
 import json
 
 ### define macro vars for model manager
-input_vars = X_train
-scoring_targets = y_train
-class_labels = ['EM_EVENTPROBABILITY', 'EM_CLASSIFICATION']
-event_prob_var = class_labels[0]
+# input_vars = X_train
+# scoring_targets = y_train
+# class_labels = ['EM_EVENTPROBABILITY', 'EM_CLASSIFICATION']
+# event_prob_var = class_labels[0]
+# target_event = dm_classtarget_level[1]
+# num_target_categories = len(dm_classtarget_level)
+# predict_method = str('{}.')+str(predict_syntax)+str('({})')
+# output_vars = pd.DataFrame(columns=class_labels, data=[[0.5, 'A']])
+
+input_df = X_train
+target_df = y_train
+predictors = np.array(X_train.columns)
+prediction_labels = ['EM_CLASSIFICATION', 'EM_EVENTPROBABILITY']
 target_event = dm_classtarget_level[1]
+target_level = 'BINARY'
 num_target_categories = len(dm_classtarget_level)
 predict_method = str('{}.')+str(predict_syntax)+str('({})')
-output_vars = pd.DataFrame(columns=class_labels, data=[[0.5, 'A']])
+output_vars = pd.DataFrame(columns=prediction_labels, data=[['A', 0.5]])
 
-### create session in cas
-sess = Session(hostname=session_sse, token=access_token, client_id='ssemonthly', client_secret='access_token')
-
-11### create directories for metadata
+### create directories for metadata
 output_path = Path(output_dir) / metadata_output_dir / model_name
 if output_path.exists() and output_path.is_dir():
     shutil.rmtree(output_path)
@@ -281,26 +303,112 @@ requirements = [
 requirementsObj = json.dumps(requirements, indent = 4)
 with open(str(output_path)+str('/requirements.json'), 'w') as outfile:
     outfile.write(requirementsObj)
+    
+### copy .py script to output path
+### right click script and copy path (change to forward slash)
+src = str(git_dir) + str('/python/logit_python/financial_services/logit_python_finsvcs.py')
+print(src)
+dst = output_path
+shutil.copy(src, dst)
+output_path
 
 ### create metadata and import to model manager
-pzmm.PickleModel.pickle_trained_model(dm_model, model_name, output_path)
-pzmm.JSONFiles().writeVarJSON(input_vars, isInput=True, jPath=output_path)
-pzmm.JSONFiles().writeVarJSON(output_vars, isInput=False, jPath=output_path)
-pzmm.JSONFiles().calculateFitStat(trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
-pzmm.JSONFiles().generateROCLiftStat(dm_dec_target, int(target_event), conn, trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
-pzmm.JSONFiles().writeFileMetadataJSON(model_name, jPath=output_path)
-pzmm.JSONFiles().writeModelPropertiesJSON(
-    modelName=model_name, 
-    modelDesc=description,
-    targetVariable=dm_dec_target,
-    modelType=model_type,
-    modelPredictors=predictors,
-    targetEvent=target_event,
-    numTargetCategories=num_target_categories,
-    eventProbVar=event_prob_var,
-    jPath=output_path,
-    modeler=username)
-pzmm.ImportModel().pzmmImportModel(output_path, model_name, project_name, input_vars, scoring_targets, predict_method, metrics=class_labels, force=True)
+pzmm.PickleModel.pickle_trained_model(trained_model=dm_model, model_prefix=model_name, pickle_path=output_path)
+#pzmm.JSONFiles().create_requirements_json(model_path=output_path, output_path=output_path) needs to be reviewed and possibly edited
+pzmm.JSONFiles().write_var_json(input_data=input_df, is_input=True, json_path=output_path)
+pzmm.JSONFiles().write_var_json(input_data=output_vars, is_input=False, json_path=output_path)
+pzmm.JSONFiles().write_file_metadata_json(model_prefix=model_name, json_path=output_path)
+pzmm.JSONFiles().write_model_properties_json(
+    model_name=model_name, 
+    target_variable=dm_dec_target,
+    target_values=dm_classtarget_level,
+    json_path=output_path,
+    model_desc=description,
+    model_algorithm=model_type,
+    model_function=model_function,
+    modeler=username,
+    train_table=in_mem_tbl,
+    properties=None)
+
+### create session in cas
+sess = Session(hostname=session, token=access_token, client_id='ssemonthly', client_secret='access_token')
+
+pzmm.JSONFiles().calculate_model_statistics(
+    target_value=int(dm_classtarget_level[1]), 
+    prob_value=0.11, 
+    train_data=trainData, 
+    test_data=testData, 
+    validate_data=validData, 
+    json_path=output_path)
+
+conn.upload(
+            trainData,
+            casout={"name": "assess_dataset", "replace": True, "caslib": "casuser"},
+            )
+
+conn.percentile.assess(
+                table={"name": "assess_dataset", "caslib": "casuser"},
+                response="predict",
+                pVar="predict_proba",
+                event=dm_classtarget_level[1],
+                pEvent=str(1),
+                inputs="actual",
+                fitStatOut={"name": "FitStat", "replace": True, "caslib": "casuser"},
+                rocOut={"name": "ROC", "replace": True, "caslib": "casuser"},
+                casout={"name": "Lift", "replace": True, "caslib": "casuser"},
+            )
+
+FitStat = conn.CASTable(caslib='casuser', name='FitStat').to_frame()
+ROC = conn.CASTable(caslib='casuser', name='ROC').to_frame()
+Lift = conn.CASTable(caslib='casuser', name='Lift').to_frame()
+
+pzmm.JSONFiles().assess_model_bias(
+    score_table=scored, 
+    sensitive_values=bias_vars, 
+    actual_values=dm_dec_target,
+    pred_values=None,
+    prob_values=dm_predictionvar,
+    levels=dm_classtarget_level,
+    cutoff=0.5,
+    json_path=output_path)
+
+pzmm.ImportModel().import_model(
+    model_files=output_path, 
+    model_prefix=model_name, 
+    project=project_name, 
+    input_data=input_df,
+    predict_method=[dm_model.predict_proba, [int, int]],
+    score_metrics=prediction_labels,
+    pickle_type='pickle',
+    project_version='latest',
+    missing_values=False,
+    overwrite_model=False,
+    mlflow_details=None,
+    predict_threshold=None,
+    target_values=dm_classtarget_level,
+    overwrite_project_properties=False,
+    target_index=1,
+    model_file_name=model_name + str('.pickle'))
+
+### create metadata and import to model manager
+# pzmm.PickleModel.pickle_trained_model(dm_model, model_name, output_path)
+# pzmm.JSONFiles().writeVarJSON(input_vars, isInput=True, jPath=output_path)
+# pzmm.JSONFiles().writeVarJSON(output_vars, isInput=False, jPath=output_path)
+# pzmm.JSONFiles().calculateFitStat(trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
+# pzmm.JSONFiles().generateROCLiftStat(dm_dec_target, int(target_event), conn, trainData=trainData, testData=testData, validateData=validData, jPath=output_path)
+# pzmm.JSONFiles().writeFileMetadataJSON(model_name, jPath=output_path)
+# pzmm.JSONFiles().writeModelPropertiesJSON(
+#     modelName=model_name, 
+#     modelDesc=description,
+#     targetVariable=dm_dec_target,
+#     modelType=model_type,
+#     modelPredictors=predictors,
+#     targetEvent=target_event,
+#     numTargetCategories=num_target_categories,
+#     eventProbVar=event_prob_var,
+#     jPath=output_path,
+#     modeler=username)
+# pzmm.ImportModel().pzmmImportModel(output_path, model_name, project_name, input_vars, scoring_targets, predict_method, metrics=class_labels, force=True)
 
 
 # =============================================================================
@@ -314,3 +422,112 @@ pzmm.ImportModel().pzmmImportModel(output_path, model_name, project_name, input_
 #         modelRepo.create_project(project_name, caslib)
 #         modelRepo.import_model_from_zip(model_name, project_name, zip_file, version='latest')
 # =============================================================================
+
+#######################################
+### Register Model in Model Manager ###
+#######################################
+
+from sasctl import Session
+import sasctl.pzmm as pzmm
+from sasctl.services import model_repository as modelRepo 
+from sasctl.tasks import register_model
+import shutil
+import json
+
+### define macro vars for model manager
+input_df = X_train
+target_df = y_train
+predictors = np.array(X_train.columns)
+output_labels = ['EM_PREDICTION', 'EM_PREDICTION']
+event_prob_var = output_labels[0]
+target_event = None
+target_level = 'INTERVAL'
+num_target_categories = 1
+predict_method = str('{}.')+str(predict_syntax)+str('({})')
+output_vars = pd.DataFrame(columns=output_labels, data=[[0.5, 0.5]])
+
+### create directories for metadata
+output_path = Path(output_dir) / metadata_output_dir / model_name
+if output_path.exists() and output_path.is_dir():
+    shutil.rmtree(output_path)
+
+### create output path
+os.makedirs(output_path)
+
+### create python requirements file
+requirements = [
+    {
+        "step":"import math, pickle, pandas as pd, numpy as np, settings",
+        "command":"pip3 install math==3.10.5 pickle==3.10.5 numpy==1.20.3 pandas==1.3.4 settings==0.2.2"
+    }
+]
+requirementsObj = json.dumps(requirements, indent = 4)
+with open(str(output_path)+str('/requirements.json'), 'w') as outfile:
+    outfile.write(requirementsObj)
+    
+### copy .py script to output path
+### right click script and copy path (change to forward slash)
+src = str(git_dir) + str('/python/tweedie_regressor_python/insurance_claims_auto/pure_premium_python_insuranceclaimsauto.py')
+print(src)
+dst = output_path
+shutil.copy(src, dst)
+    
+### create session in cas
+sess = Session(hostname=session, token=access_token, client_id='ssemonthly', client_secret='access_token')
+
+### create metadata and import to model manager
+pzmm.PickleModel.pickle_trained_model(trained_model=dm_model, model_prefix=model_name, pickle_path=output_path)
+pzmm.JSONFiles().create_requirements_json(model_path=output_path, output_path=output_path)
+pzmm.JSONFiles().write_var_json(input_data=input_df, is_input=True, json_path=output_path)
+pzmm.JSONFiles().write_var_json(input_data=output_vars, is_input=False, json_path=output_path)
+pzmm.JSONFiles().write_file_metadata_json(model_prefix=model_name, json_path=output_path)
+pzmm.JSONFiles().write_model_properties_json(
+    model_name=model_name, 
+    target_variable=dm_dec_target,
+    target_values=None,
+    json_path=output_path,
+    model_desc=description,
+    model_algorithm=model_type,
+    model_function=model_function,
+    modeler=username,
+    train_table=None,
+    properties=None)
+pzmm.JSONFiles().assess_model_bias(
+    score_table=dm_scoreddf, 
+    sensitive_values=bias_vars, 
+    actual_values=dm_dec_target,
+    pred_values='Prediction',
+    json_path=output_path)
+pzmm.ImportModel().import_model(
+    model_files=output_path, 
+    model_prefix=model_name, 
+    project=project_name, 
+    input_data=input_df,
+    pickle_type='pickle',
+    predict_method=[dm_model.predict, ["A"]],
+    project_version='latest',
+    overwrite_model=False,
+    missing_values=False,
+    mlflow_details=None,
+    score_metrics=output_labels[0],
+    target_values=None,
+    overwrite_project_properties=False,
+    model_file_name=model_name + str('.pickle'))
+
+
+#pzmm.JSONFiles().calculate_model_statistics(train_data=trainData, validate_data=validData, json_path=output_path) #testData=testData, 
+
+# alternative model registration
+pzmm.ScoreCode().write_score_code(input_df, target_df, model_name, predict_method, model_name + '.pickle', pyPath=output_path)
+zip_file = pzmm.ZipModel.zipFiles(fileDir=output_path, modelPrefix=model_name, isViya4=True)
+with sess:
+    try:
+        modelRepo.import_model_from_zip(model_name, project_name, zip_file, version='latest')
+    except ValueError:
+        modelRepo.create_project(project_name, caslib)
+        modelRepo.import_model_from_zip(model_name, project_name, zip_file, version='latest')
+        
+inputVarList = list(X_train.columns)
+for name in inputVarList:
+    print(name, str(name).isidentifier())
+list(X_train.columns)

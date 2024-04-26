@@ -9,11 +9,8 @@
 library(askpass)
 library(sys)
 
-username <- askpass("USERNAME")
-password <- askpass("PASSWORD")
-wd <- askpass("What is the Working Directory for this R Session?")
-source(file.path(wd, 'password.r'))
-metadata_output_dir <- 'outputs'
+cred <- askpass("What is the credentials path for this R Session?")
+source(file.path(cred, 'credentials.r'))
 
 ###################
 ### Environment ###
@@ -21,8 +18,7 @@ metadata_output_dir <- 'outputs'
 
 library(swat)
 
-#conn <- swat::CAS(hostname=hostname, port=port, username=username, password=password, protocol=protocol)
-conn <- CAS(hostname_sse, password=token_sse_refresh, protocol=protocol_sse) # password=token_sse
+conn <- CAS(hostname, password=token, protocol=protocol)
 print(cas.builtins.serverStatus(conn))
 
 #############################
@@ -30,7 +26,7 @@ print(cas.builtins.serverStatus(conn))
 #############################
 
 ### caslib and table to use in modeling
-caslib <- 'Public'
+caslib <- 'casuser'
 in_mem_tbl <- 'FINANCIAL_SERVICES_PREP'
 
 ### load table in-memory if not already exists in-memory
@@ -211,7 +207,7 @@ pmml_file <- saveXML(pmml(dm_model, model.name = model_name, description = model
 file.copy(file.path(output_dir, train_code_name), file.path(output_path, train_code_name))
 file.copy(file.path(output_dir, score_code_name), file.path(output_path, score_code_name))
 
-sess <- session(hostname_model, username=username, password=password)
+sess <- session(hostname=session, oauth_token=token)
 
 rm <- register_model(
   session = sess,

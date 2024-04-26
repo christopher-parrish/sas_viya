@@ -7,22 +7,17 @@
 ###################
 
 import keyring
-import getpass
 import runpy
 import os
 from pathlib import Path
-import urllib3
-urllib3.disable_warnings()
 
 ### run script that contains username, password, hostname, working directory, and output directory
     ### ...OR define directly in this script
-from password import hostname, port, wd, output_dir
+from password import hostname_cas, hostname_http, port_cas, port_http, protocol_cas, protocol_http, wd, output_dir, git_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse, token_sse_refresh, token_sse_pem, hostname_sse, session_sse
+
 runpy.run_path(path_name='password.py')
 username = keyring.get_password('cas', 'username')
 password = keyring.get_password('cas', username)
-# username = getpass.getpass("Username: ")
-# password = getpass.getpass("Password: ")
-output_dir = os.getcwd()
 metadata_output_dir = 'outputs'
 
 ###################
@@ -30,10 +25,14 @@ metadata_output_dir = 'outputs'
 ###################
 
 import swat
+from casauth import CASAuth
 import pandas as pd
 
-conn = swat.CAS(hostname, port, username, password, protocol="cas")
-print(conn)
+#conn =  swat.CAS(hostname=hostname_cas, port=port_cas, username=username, password=password, protocol=protocol_cas)
+### ssemonthly connection ###
+access_token = open(token_sse, "r").read()
+#conn =  swat.CAS(hostname=hostname_sse, username=None, password=access_token, ssl_ca_list=token_sse_pem, protocol=protocol_http)
+conn = CASAuth(cert_dir, ssl_ca_list=token_sse_pem)
 print(conn.serverstatus())
 
 #############################
@@ -41,8 +40,8 @@ print(conn.serverstatus())
 #############################
 
 ### caslib and table to use in modeling
-caslib = 'Public'
-in_mem_tbl = 'pure_premium_raw_adj'
+caslib = 'casuser'
+in_mem_tbl = 'pure_premium_cp'
 
 ### load table in-memory if not already exists in-memory
 if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
@@ -125,6 +124,7 @@ model_name = 'tweedie_python'
 project_name = 'Pure Premium'
 description = 'Tweedie GLM'
 model_type = 'GLM'
+model_function = 'Prediction'
 predict_syntax = 'predict'
 
 ### define macro variables for model
@@ -143,7 +143,7 @@ mlflow_class_labels =['TENSOR']
 mlflow_predict_syntax = 'predict'
 
 ### var to consider in bias assessment
-bias_var = 'Gender'
+bias_vars = ['GenderM', 'DrivingUnderInfluence']
 
 ### create partition column, if not already in dataset
 if create_new_partition == 'yes':
@@ -241,23 +241,29 @@ df_temp = transforms.fit_transform(dm_inputdf_raw)
 transform_cols = poly_cols_1_out + impute_cols_1_out + encode_cols_1_out + binned_cols_1_out + scaled_cols_1_out + log_cols_1_out + log_scale_cols_1_out + keep_cols_1
 dm_inputdf = pd.DataFrame(data=df_temp, columns=transform_cols)
 
+### clean up column names - remove spaces and brackets
+dm_inputdf.columns = dm_inputdf.columns.str.replace(' ', '')
+dm_inputdf.columns = dm_inputdf.columns.str.replace('(', '_')
+dm_inputdf.columns = dm_inputdf.columns.str.replace(')', '_')
+
 ### create list of rejected predictor columns
 dm_input = list(dm_inputdf.columns.values)
-dm_input = [x.replace(' ', '') for x in dm_input]
-dm_input = [x.replace('(', '_') for x in dm_input]
-dm_input = [x.replace(')', '_') for x in dm_input]
+#dm_input = [x.replace(' ', '') for x in dm_input]
+#dm_input = [x.replace('(', '_') for x in dm_input]
+#dm_input = [x.replace(')', '_') for x in dm_input]
 print(dm_input)
 macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
 #string_cols = list(dm_inputdf.select_dtypes('object'))
 #keep_predictors = [i for i in dm_input if i not in macro_vars]
 #keep_predictors = [string_cols]
 #rejected_predictors = [i for i in dm_input if i not in keep_predictors]
-rejected_predictors = ['Rating_CategoryA', 'Occupation(missing)', 'Marital_StatusM',
+rejected_predictors = ['Rating_CategoryA', 'Occupation_missing_', 'Marital_StatusM',
                        'EducationBachelors', 'GenderF', 'Car_TypeHatchback', 'CarUseC', 'Exposure']
                         # 'Income', 'IncomeSq', 
 rejected_vars = rejected_predictors + macro_vars
 for i in rejected_vars:
     dm_input.remove(i)
+print(dm_input)
 
 ##################
 ### Data Split ###
@@ -344,6 +350,7 @@ def score_func(partition_df, partition_X, partition_y, partition):
     global df
     df = pd.DataFrame(dfProba)
 
+
 score_func(dm_traindf, X_train, y_train, 'train')
 trainProba = df
 trainData = trainProba[[dm_dec_target, 'Prediction']]
@@ -353,6 +360,7 @@ trainData = trainProba[[dm_dec_target, 'Prediction']]
 score_func(dm_validdf, X_valid, y_valid, 'validate')
 validProba = df
 validData = validProba[[dm_dec_target, 'Prediction']]
+dm_scoreddf = df
 
 #######################################
 ### Register Model in Model Manager ###
@@ -396,32 +404,59 @@ requirementsObj = json.dumps(requirements, indent = 4)
 with open(str(output_path)+str('/requirements.json'), 'w') as outfile:
     outfile.write(requirementsObj)
     
+### copy .py script to output path
+### right click script and copy path (change to forward slash)
+src = str(git_dir) + str('/python/tweedie_regressor_python/insurance_claims_auto/pure_premium_python_insuranceclaimsauto.py')
+print(src)
+dst = output_path
+shutil.copy(src, dst)
+    
 ### create session in cas
-sess=Session(hostname, username=username, password=password, verify_ssl=False, protocol="http")
+sess = Session(hostname=session_sse, token=access_token, client_id='ssemonthly', client_secret='access_token')
 
 ### create metadata and import to model manager
-pzmm.PickleModel.pickleTrainedModel(_, dm_model, model_name, output_path)
-pzmm.JSONFiles().writeVarJSON(input_df, isInput=True, jPath=output_path)
-pzmm.JSONFiles().writeVarJSON(output_vars, isInput=False, jPath=output_path)
-pzmm.JSONFiles().calculateFitStat(trainData=trainData, validateData=validData, jPath=output_path) #testData=testData, 
-pzmm.JSONFiles().generateROCLiftStat(dm_dec_target, int(target_event), conn, trainData=trainData, validateData=validData, jPath=output_path) #testData=testData,
-pzmm.JSONFiles().writeFileMetadataJSON(model_name, jPath=output_path)
-pzmm.JSONFiles().writeModelPropertiesJSON(
-    modelName=model_name, 
-    modelDesc=description,
-    targetVariable=dm_dec_target,
-    modelType=model_type,
-    modelPredictors=predictors,
-    targetEvent=target_event,
-    targetLevel=target_level,
-    numTargetCategories=num_target_categories,
-    eventProbVar=event_prob_var,
-    jPath=output_path,
-    modeler=username)
-pzmm.ImportModel().pzmmImportModel(output_path, model_name, project_name, input_df, target_df, predict_method, metrics=output_labels, force=True)
+pzmm.PickleModel.pickle_trained_model(trained_model=dm_model, model_prefix=model_name, pickle_path=output_path)
+pzmm.JSONFiles().write_var_json(input_data=input_df, is_input=True, json_path=output_path)
+pzmm.JSONFiles().write_var_json(input_data=output_vars, is_input=False, json_path=output_path)
+pzmm.JSONFiles().write_file_metadata_json(model_prefix=model_name, json_path=output_path)
+pzmm.JSONFiles().write_model_properties_json(
+    model_name=model_name, 
+    target_variable=dm_dec_target,
+    target_values=None,
+    json_path=output_path,
+    model_desc=description,
+    model_algorithm=model_type,
+    model_function=model_function,
+    modeler=username,
+    train_table=None,
+    properties=None)
+pzmm.JSONFiles().assess_model_bias(
+    score_table=dm_scoreddf, 
+    sensitive_values=bias_vars, 
+    actual_values=dm_dec_target,
+    pred_values='Prediction',
+    json_path=output_path)
+pzmm.ImportModel().import_model(
+    model_files=output_path, 
+    model_prefix=model_name, 
+    project=project_name, 
+    input_data=input_df,
+    pickle_type='pickle',
+    predict_method=[dm_model.predict, ["A"]],
+    project_version='latest',
+    overwrite_model=False,
+    missing_values=False,
+    mlflow_details=None,
+    score_metrics=output_labels[0],
+    target_values=None,
+    overwrite_project_properties=False,
+    model_file_name=model_name + str('.pickle'))
+
+
+#pzmm.JSONFiles().calculate_model_statistics(train_data=trainData, validate_data=validData, json_path=output_path) #testData=testData, 
 
 # alternative model registration
-pzmm.ScoreCode().writeScoreCode(input_df, target_df, model_name, predict_method, model_name + '.pickle', pyPath=output_path)
+pzmm.ScoreCode().write_score_code(input_df, target_df, model_name, predict_method, model_name + '.pickle', pyPath=output_path)
 zip_file = pzmm.ZipModel.zipFiles(fileDir=output_path, modelPrefix=model_name, isViya4=True)
 with sess:
     try:

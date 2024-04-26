@@ -7,35 +7,21 @@
 ### Credentials ###
 ###################
 
-import keyring
 import os
+import sys
 from pathlib import Path
-import urllib3
-import runpy
-urllib3.disable_warnings()
 
-### run script that contains username, password, hostname, working directory, and output directory
-    ### ...OR define directly in this script
-from password import hostname_cas, hostname_http, port_cas, port_http, protocol_cas, protocol_http, wd, output_dir, hostname_dev, port_dev, protocol_dev, cert_dir, token_sse, token_sse_refresh, token_sse_pem, hostname_sse, session_sse
+sys.path.append('C:/Users/chparr/OneDrive - SAS/credentials')
+from credentials import hostname, session, port, protocol, wd, output_dir, git_dir, token_dir, token, token_refresh, token_pem, username
 
-runpy.run_path(path_name='password.py')
-username = keyring.get_password('cas', 'username')
-password = keyring.get_password('cas', username)
-metadata_output_dir = 'outputs'
-
-###################
-### Environment ###
-###################
+#############################
+### Connect with SAS Viya ###
+#############################
 
 import swat
-import pandas as pd
-from casauth import CASAuth
 
-conn =  swat.CAS(hostname=hostname_cas, port=port_cas, username=username, password=password, protocol=protocol_cas)
-### ssemonthly connection ###
-#access_token = open(token_sse, "r").read()
-#conn =  swat.CAS(hostname=hostname_sse, username=None, password=access_token, ssl_ca_list=token_sse_pem, protocol=protocol_http)
-#conn = CASAuth(cert_dir, ssl_ca_list=token_sse_pem)
+access_token = open(token, "r").read()
+conn =  swat.CAS(hostname=hostname, username=None, password=access_token, ssl_ca_list=token_pem, protocol=protocol)
 print(conn.serverstatus())
 
 #############################
@@ -43,26 +29,22 @@ print(conn.serverstatus())
 #############################
 
 ### caslib and table to use in modeling
-caslib = 'Public'
+caslib = 'finbank'
 in_mem_tbl = 'FINANCIAL_SERVICES_PREP'
 
 ### load table in-memory if not already exists in-memory
 if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
     conn.table.loadTable(caslib=caslib, path=str(in_mem_tbl+str('.sashdat')), 
                          casout={'name':in_mem_tbl, 'caslib':caslib, 'promote':True})
-    
+
 ### show table to verify
 conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
-
-### create names of tables for action set
-astore_tbl = str(in_mem_tbl+str('_astore'))
-cas_score_tbl = str(in_mem_tbl+str('_score'))
-cas_out_tbl = str(in_mem_tbl+str('_model'))
 
 ########################
 ### Create Dataframe ###
 ########################
 
+### keep as in-memory table
 dm_inputdf = conn.CASTable(in_mem_tbl, caslib=caslib)
 
 ### print columns for review of model parameters
@@ -111,6 +93,7 @@ print(xgb_params)
 print(early_stop_params)
 
 ### model manager information
+metadata_output_dir = 'outputs'
 model_name = 'gbtree_action_python_finsvcs'
 project_name = 'Financial Services'
 description = 'gbtree_action'
@@ -123,20 +106,7 @@ dm_key = 'account_id'
 dm_classtarget_level = ['0', '1']
 dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1, 2]
 
-### var to consider in bias assessment
-bias_var = 'gender'
-
-### var to consider in partial dependency
-pd_var1 = 'credit_score'
-pd_var2 = 'net_worth'
-
-##############################
-### Final Modeling Columns ###
-##############################
-
 ### create list of model variables
-dm_input = list(dm_inputdf.columns.values)
-macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
 keep_predictors = [
     'net_worth',
     'credit_score',
@@ -151,8 +121,21 @@ keep_predictors = [
     'age',
     'job_in_hospitality'
     ]
-#keep_predictors = [i for i in dm_input if i not in macro_vars]
 #rejected_predictors = []
+
+### var to consider in bias assessment
+bias_var = 'gender'
+
+### var to consider in partial dependency
+pd_var1 = 'credit_score'
+pd_var2 = 'net_worth'
+
+##############################
+### Final Modeling Columns ###
+##############################
+
+dm_input = list(dm_inputdf.columns.values)
+macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
 rejected_predictors = [i for i in dm_input if i not in keep_predictors]
 rejected_vars = rejected_predictors # + macro_vars
 for i in rejected_vars:
@@ -170,6 +153,11 @@ valid_part = str(dm_partitionvar)+str('=')+str(dm_partition_validate_val)
 #####################
 ### Training Code ###
 #####################
+
+### create names of tables for action set
+astore_tbl = str(in_mem_tbl+str('_astore'))
+cas_score_tbl = str(in_mem_tbl+str('_score'))
+cas_out_tbl = str(in_mem_tbl+str('_model'))
 
 dm_model = conn.decisionTree.gbtreeTrain(**xgb_params,
     earlyStop=early_stop_params,
@@ -329,7 +317,7 @@ import shutil
 target_event = dm_classtarget_level[1]
 
 ### create session in cas
-sess=Session(hostname, username=username, password=password, verify_ssl=False, protocol="http")
+sess = Session(hostname=session, token=access_token, client_secret='access_token')
 
 ### create directories for metadata
 output_path = Path(output_dir) / metadata_output_dir / model_name

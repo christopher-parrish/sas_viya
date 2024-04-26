@@ -10,20 +10,16 @@
 library(askpass)
 library(sys)
 
-username <- askpass("USERNAME")
-password <- askpass("PASSWORD")
-wd <- askpass("What is the Working Directory for this R Session?")
-source(file.path(wd, 'password.r'))
-metadata_output_dir <- 'outputs'
+cred <- askpass("What is the credentials path for this R Session?")
+source(file.path(cred, 'credentials.r'))
 
-###################
-### Environment ###
-###################
+#############################
+### Connect with SAS Viya ###
+#############################
 
 library(swat)
 
-#conn <- swat::CAS(hostname=hostname, port=port, username, password, protocol=protocol)
-conn <- CAS(hostname_sse, password=token_sse, protocol=protocol_sse) # password=token_sse
+conn <- CAS(hostname, password=token, protocol=protocol)
 print(cas.builtins.serverStatus(conn))
 
 #############################
@@ -31,7 +27,7 @@ print(cas.builtins.serverStatus(conn))
 #############################
 
 ### caslib and table to use in modeling
-caslib <- 'Public'
+caslib <- 'casuser'
 in_mem_tbl <- 'FINANCIAL_SERVICES_PREP'
 
 ### load table in-memory if not already exists in-memory
@@ -42,15 +38,11 @@ if (cas.table.tableExists(conn, caslib=caslib, name=in_mem_tbl)<=0) {
 ### show table to verify
 cas.table.tableInfo(conn, caslib=caslib, wildIgnore=FALSE, name=in_mem_tbl)
 
-### create names of tables for action set
-astore_tbl <- paste(in_mem_tbl, '_astore', sep ="")
-cas_score_tbl <- paste(in_mem_tbl, '_score', sep ="")
-cas_out_tbl <- paste(in_mem_tbl, '_model', sep ="")
-
 ########################
 ### Create Dataframe ###
 ########################
 
+### keep as in-memory table
 dm_inputdf <- defCasTable(conn, in_mem_tbl, caslib=caslib)
 
 ### print columns for review of model parameters
@@ -109,13 +101,7 @@ dm_classtarget_level <- list('0', '1')
 dm_partition_val <- list('dm_partition_validate_val'=0, 'dm_partition_train_val'=1, 'dm_partition_test_val'=2)
 dm_partition_perc <- list('dm_partition_validate_perc'=0.3, 'dm_partition_train_perc'=0.6, 'dm_partition_test_perc'=0.1)
 
-##############################
-### Final Modeling Columns ###
-##############################
-
-### create list of model variables
-dm_input <- colnames(dm_inputdf)
-macro_vars <- list(dm_dec_target, dm_partitionvar, dm_key)
+### create list of regressors
 keep_predictors <- list(
   'net_worth',
   'credit_score',
@@ -130,8 +116,20 @@ keep_predictors <- list(
   'age',
   'job_in_hospitality'
 )
-#keep_predictors <- 
 #rejected_predictors <- list()
+
+### vars to consider in bias assessment
+bias_var <- list('gender', 'age')
+
+### vars to consider in partial dependency
+pd_var <- dm_input #list('credit_score', 'net_worth')
+
+##############################
+### Final Modeling Columns ###
+##############################
+
+dm_input <- colnames(dm_inputdf)
+macro_vars <- list(dm_dec_target, dm_partitionvar, dm_key)
 rejected_predictors <- dm_input[! dm_input %in% c(keep_predictors)]
 rejected_vars <- unlist(c(rejected_predictors)) # , macro_vars
 dm_input <- dm_input[! dm_input %in% c(rejected_vars)]
@@ -147,15 +145,14 @@ train_part = paste(dm_partitionvar, '=', dm_partition_val[['dm_partition_train_v
 test_part = paste(dm_partitionvar, '=', dm_partition_val[['dm_partition_test_val']], sep="")
 valid_part = paste(dm_partitionvar, '=', dm_partition_val[['dm_partition_validate_val']], sep="")
 
-### vars to consider in bias assessment
-bias_var <- list('gender', 'age')
-
-### vars to consider in partial dependency
-pd_var <- dm_input #list('credit_score', 'net_worth')
-
 #####################
 ### Training Code ###
 #####################
+
+### create names of tables for action set
+astore_tbl <- paste(in_mem_tbl, '_astore', sep ="")
+cas_score_tbl <- paste(in_mem_tbl, '_score', sep ="")
+cas_out_tbl <- paste(in_mem_tbl, '_model', sep ="")
 
 dm_model <- cas.decisionTree.gbtreeTrain(conn,
     earlyStop=early_stop_params,
@@ -417,10 +414,12 @@ astore_blob <- cas.astore.download(conn, rstore=list(caslib=caslib, name=astore_
 astore_path <- "./rf_model.astore"
 con <- file(astore_path, "wb")
 ### file is downloaded as base64 encoded
-writeBin(object=astore_blob$blob, con=con, useBytes=T)
+writeBin(object = jsonlite::base64_dec(astore_blob$blob$data), con = con, useBytes = T)
 close(con)
-sess <- session("https://fsbulab.unx.sas.com", username=username, password=password)
-output <- register_model(session = sess,
+### create session in cas
+sess <- session(hostname=session, oauth_token=token)
+
+sasmodel <- register_model(session = sess,
                            file = astore_path,
                            name = model_name,
                            type = "astore",
