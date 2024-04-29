@@ -167,3 +167,9 @@ print('score_valid:', dm_model.score(X_valid, y_valid))
 #################################
 
 dm_model.export(file="/workspaces/workspace/data/financial_services.astore", replace=True)
+
+###########################
+### Save Model in Table ###
+###########################
+
+dm_model.save("/workspaces/workspace/data/financial_services.model")
