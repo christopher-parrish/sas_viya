@@ -2,9 +2,9 @@ cas casauto sessopts=(caslib=casuser, metrics=true, timeout=1800);
 libname cp cas caslib=casuser;
 caslib _all_ assign;
 
-/*********************
-* PROC IML Procedure *
-**********************/
+/***********************************
+* PROC IML Procedure - Train Model *
+************************************/
 
 data aml_bank_prep;
 	set casuser.aml_bank_prep;
@@ -35,9 +35,9 @@ print b[c=("Intercept"||varNames) L="Parameter Estimates" F=D8.];
 run;
 quit;
 
-/*****************
-* IML Action Set *
-******************/
+/*******************************
+* IML Action Set - Train Model *
+********************************/
 
 proc cas;
 loadactionset "iml";
@@ -90,11 +90,11 @@ loadactionset "iml";
 source score_model;
    /* This function scores one observation at a time */
    start scoreFunc(beta, xn);
-      prediction = beta[1] + beta[2]*xn[1] + beta[3]*xn[2] + beta[4]*xn[3] +
+      P_ml_indicator1 = exp(beta[1] + beta[2]*xn[1] + beta[3]*xn[2] + beta[4]*xn[3] +
 							+ beta[5]*xn[4] + beta[6]*xn[5] + beta[7]*xn[6] +
 							+ beta[8]*xn[7] + beta[9]*xn[8] + beta[10]*xn[9] +
-							+ beta[11]*xn[10];
-      return prediction;
+							+ beta[11]*xn[10]);
+      return P_ml_indicator1;
    finish;
 
    beta={-6.5838, 2.4328, 1.3476, 1.2040, 1.7209, 1.6382, -1.9480, -2.0010, 0.4066, 0.0597, -0.00019};
@@ -104,21 +104,25 @@ source score_model;
    rc = Score('scoreFunc',    /* name of the scoring function */
               beta,          /* scoring constants */
               varNames,        /* input variables */
-              'prediction',        /* output variables */
+              'P_ml_indicator1',        /* output variables */
               'aml_bank_prep',        /* input CAS table */
               'aml_bank_score',    /* output CAS table */
               1,             /* pass 1 row at a time */
               copyVars);     /* copy vars from input to output */
 
 	*** create astore ***;
-	analytics_store = astore('aml_bank_astore', 'scoreFunc', beta, varNames, 'prediction');
+	analytics_store = astore('aml_bank_astore', 'scoreFunc', beta, varNames, 'P_ml_indicator1');
 endsource;
 iml / code=score_model, nthreads=8;
 run;
 quit;
 
+/***************
+* Scored Table *
+****************/
+
 proc print data=casuser.aml_bank_score(obs=5);
-   var prediction
+   var P_ml_indicator1
 		marital_status_single				
 		checking_only_indicator
 		prior_ctr_indicator
@@ -131,13 +135,17 @@ proc print data=casuser.aml_bank_score(obs=5);
 		distance_to_bank;
 run;
 
+/************************
+* Score Table w. Astore *
+*************************/
+
 proc astore;
-	score rstore = casuser.aml_bank_astore data=casuser.aml_bank_prep
+	score rstore=casuser.aml_bank_astore data=casuser.aml_bank_prep
 					out=casuser.aml_bank_score_astore copyVars=(_ALL_);
 run;
 
 proc print data=casuser.aml_bank_score_astore(obs=5);
-   var prediction
+   var P_ml_indicator1
 		marital_status_single				
 		checking_only_indicator
 		prior_ctr_indicator
