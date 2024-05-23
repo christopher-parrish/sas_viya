@@ -11,10 +11,7 @@
 # import python libraries
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.utils import shuffle
-import pickle
 
 ### model arugments
 logit_params = {
@@ -36,7 +33,7 @@ logit_params = {
 
 ### model manager information
 model_name = 'logit_python_SASViya'
-project_name = 'Risk Score'
+project_name = 'Anti-Money Laundering'
 description = 'Logit Python'
 model_type = 'logistic_regression'
 predict_syntax = 'predict_proba'
@@ -50,17 +47,23 @@ dm_classtarget_level = ['0', '1']
 dm_partition_validate_val, dm_partition_train_val, dm_partition_test_val = [0, 1, 2]
 dm_partition_validate_perc, dm_partition_train_perc, dm_partition_test_perc = [0.3, 0.6, 0.1]
 
-### create list of rejected predictor columns
-    ### if already rejected in project, remove from this list
-rejected_predictors = [
-    'atm_deposit_indicator', 
-    'citizenship_country_risk', 
-    'distance_to_bank',
-    'distance_to_employer', 
-    'income', 
-    'num_acctbal_chgs_gt2000',
-    'occupation_risk'
+### create list of regressors
+keep_predictors = [
+    'marital_status_single',
+    'checking_only_indicator',
+    'prior_ctr_indicator',
+    'address_change_2x_indicator',
+    'cross_border_trx_indicator',
+    'in_person_contact_indicator',
+    'linkedin_indicator',
+    'trx_10ksum_indicator', 
+    'common_merchant_indicator', 
+    'direct_deposit_indicator',  
+    'primary_transfer_cash', 
+    'credit_score', 
+    'num_transactions'
     ]
+#rejected_predictors = []
 
 ### create partition column, if not already in dataset
 if create_new_partition == 'yes':
@@ -83,9 +86,11 @@ dm_inputdf.drop('_dmIndex_', axis=1, inplace=True)
 ### create list of model variables
 dm_input = list(dm_inputdf.columns.values)
 macro_vars = (dm_dec_target + ' ' + dm_partitionvar + ' ' + dm_key).split()
-rejected_vars = rejected_predictors + macro_vars
+rejected_predictors = [i for i in dm_input if i not in keep_predictors]
+rejected_vars = rejected_predictors # + macro_vars (include macro_vars if rejected_predictors are explicitly listed - not contra keep_predictors)
 for i in rejected_vars:
     dm_input.remove(i)
+print(dm_input)
 
 ### create prediction variables
 dm_predictionvar = [str('P_') + dm_dec_target + dm_classtarget_level[0], str('P_') + dm_dec_target + dm_classtarget_level[1]]
@@ -109,6 +114,9 @@ y_valid = dm_validdf[dm_dec_target]
 #####################
 ### Training Code ###
 #####################
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
 
 ### estimate & fit model
 dm_model = LogisticRegression(**logit_params)
@@ -169,6 +177,8 @@ print(*dm_input)
 ####################
 ### Pickle Model ###
 ####################
+
+import pickle
 
 with open(dm_pklpath, 'wb') as f:
 	pickle.dump(dm_model, f)

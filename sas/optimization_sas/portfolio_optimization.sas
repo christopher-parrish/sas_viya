@@ -21,6 +21,8 @@ Alternative
 Example script found in video on: https://www.sas.com/en_us/software/optimization.html
 */
 
+/* ASSETS table as CAS table or SAS dataset */
+
 libname mycaslib cas caslib=casuser;
 
 proc optmodel;

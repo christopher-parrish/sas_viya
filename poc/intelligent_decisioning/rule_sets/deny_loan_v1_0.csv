@@ -1,2 +1,0 @@
-﻿ruleset_id,ruleset_nm,folder_path,ruleset_desc,rule_id,rule_nm,rule_desc,rule_seq_no,conditional,record_rule_fired_flag,datatype,lhs_term,expression,expression_type,expression_order
-19bfd851-fd49-4526-8701-5c7fb0a97cee,deny_loan,/Financial Banking/07. Build Decisions - SAS Intelligent Decisioning,,562fde87-0f5a-4c51-a0a7-0f37c6ddcb73,Default_assignment_1,assignment,1,if,N,string,loan_decision,"'deny'",ACTION,1
