@@ -1,0 +1,2 @@
+﻿ruleset_id,ruleset_nm,folder_path,ruleset_desc,rule_id,rule_nm,rule_desc,rule_seq_no,conditional,record_rule_fired_flag,datatype,lhs_term,expression,expression_type,expression_order
+ef83caba-b38d-48a4-9204-3ef22fd3c4d7,auto_escalate,/Users/[directory to place files]/decisioning_rules,,ca62ba8b-d511-4a35-98e2-104297d6a2ee,Default_assignment_1,assignment,1,if,N,,,review_decision = 'auto_escalate',ACTION,1

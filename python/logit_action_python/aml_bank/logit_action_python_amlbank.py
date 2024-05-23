@@ -1,38 +1,27 @@
 
-#####################################################
-###     Train & Register CAS logistic Model       ###
-#####################################################
+##################################################
+###     Train & Register SAS Logit Model       ###
+##################################################
 
 ###################
 ### Credentials ###
 ###################
 
-import keyring
-import runpy
 import os
-import urllib3
-urllib3.disable_warnings()
+import sys
+from pathlib import Path
 
-### run script that contains username, password, hostname, working directory, and output directory
-    ### ...OR define directly in this script
-from password import hostname, port, wd, output_dir, hostname_dev, port_dev
+sys.path.append('C:/Users/chparr/OneDrive - SAS/credentials')
+from credentials import hostname, session, port, protocol, wd, output_dir, git_dir, token_dir, token, token_refresh, token_pem, username
 
-#runpy.run_path(path_name='password.py')
-username = keyring.get_password('cas', 'username')
-password = keyring.get_password('cas', username)
-metadata_output_dir = 'outputs'
-
-###################
-### Environment ###
-###################
+#############################
+### Connect with SAS Viya ###
+#############################
 
 import swat
-import pandas as pd
 
-#os.environ['CAS_CLIENT_SSL_CA_LIST'] = "C:\\Users\\chparr\\OneDrive - SAS\\sas_viya_cl_executable\\trustedcerts.pem"
-#conn = swat.CAS(hostname_dev, port_dev, username, password, protocol='https')
-
-conn =  swat.CAS(hostname, port, username=username, password=password, protocol='cas')
+access_token = open(token, "r").read()
+conn =  swat.CAS(hostname=hostname, username=None, password=access_token, ssl_ca_list=token_pem, protocol=protocol)
 print(conn.serverstatus())
 
 #############################
@@ -40,7 +29,7 @@ print(conn.serverstatus())
 #############################
 
 ### caslib and table to use in modeling
-caslib = 'Public'
+caslib = 'casuser'
 in_mem_tbl = 'AML_BANK_PREP'
 
 ### load table in-memory if not already exists in-memory ###
@@ -50,11 +39,6 @@ if conn.table.tableExists(caslib=caslib, name=in_mem_tbl).exists<=0:
     
 ### show table to verify
 conn.table.tableInfo(caslib=caslib, wildIgnore=False, name=in_mem_tbl)
-
-### create names of tables for action set
-astore_tbl = str(in_mem_tbl+str('_astore'))
-cas_score_tbl = str(in_mem_tbl+str('_score'))
-cas_out_tbl = str(in_mem_tbl+str('_model'))
 
 ########################
 ### Create Dataframe ###
@@ -83,9 +67,10 @@ event = 'LAST'
 selection_method = 'STEPWISE'
 
 ### model manager information
-model_name = 'logit_cas'
+metadata_output_dir = 'outputs'
+model_name = 'logit_SAS'
 project_name = 'Risk Score'
-description = 'Logit CAS'
+description = 'Logit SAS'
 model_type = 'Logistic Regression'
 metadata_output_dir = 'outputs'
 
@@ -141,6 +126,11 @@ dm_classtarget_intovar = str('I_') + dm_dec_target
 #####################
 ### Training Code ###
 #####################
+
+### create names of tables for action set
+astore_tbl = str(in_mem_tbl+str('_astore'))
+cas_score_tbl = str(in_mem_tbl+str('_score'))
+cas_out_tbl = str(in_mem_tbl+str('_model'))
 
 ### estimate & fit model
 dm_model = conn.regression.logistic(
