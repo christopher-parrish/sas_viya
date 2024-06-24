@@ -49,7 +49,6 @@ dm_partition_validate_perc, dm_partition_train_perc, dm_partition_test_perc = [0
 
 ### create list of regressors
 keep_predictors = [
-    'marital_status_single',
     'checking_only_indicator',
     'prior_ctr_indicator',
     'address_change_2x_indicator',
@@ -58,7 +57,8 @@ keep_predictors = [
     'linkedin_indicator',
     'trx_10ksum_indicator', 
     'common_merchant_indicator', 
-    'direct_deposit_indicator',  
+    'direct_deposit_indicator',
+    'marital_status_single',
     'primary_transfer_cash', 
     'credit_score', 
     'num_transactions'
