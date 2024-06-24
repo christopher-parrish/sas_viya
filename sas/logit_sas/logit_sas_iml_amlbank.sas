@@ -93,24 +93,27 @@ source score_model;
 							+ beta[5]*xn[4] + beta[6]*xn[5] + beta[7]*xn[6] +
 							+ beta[8]*xn[7] + beta[9]*xn[8] + beta[10]*xn[9] +
 							+ beta[11]*xn[10]);
-      return P_ml_indicator1;
+	  P_ml_indicator0 = 1-P_ml_indicator1;
+	  L = P_ml_indicator1 || P_ml_indicator0;  
+	  return L;
    finish;
 
    beta={-6.5838, 2.4328, 1.3476, 1.2040, 1.7209, 1.6382, -1.9480, -2.0010, 0.4066, 0.0597, -0.00019};
    varNames = {'marital_status_single' 'checking_only_indicator' 'prior_ctr_indicator' 'address_change_2x_indicator' 'cross_border_trx_indicator' 'in_person_contact_indicator' 'linkedin_indicator' 'citizenship_country_risk' 'distance_to_employer' 'distance_to_bank'};
    copyVars = varNames || {'ml_indicator'};
+   outVars = {'P_ml_indicator1', 'P_ml_indicator0'};
 
    rc = Score('scoreFunc',    /* name of the scoring function */
               beta,          /* scoring constants */
               varNames,        /* input variables */
-              'P_ml_indicator1',        /* output variables */
+              outVars,        /* output variables */
               'aml_bank_prep',        /* input CAS table */
-              'aml_bank_score',    /* output CAS table */
+              'logit_sas_iml_score',    /* output CAS table */
               1,             /* pass 1 row at a time */
               copyVars);     /* copy vars from input to output */
 
 	*** create astore ***;
-	analytics_store = astore('aml_bank_astore', 'scoreFunc', beta, varNames, 'P_ml_indicator1');
+	analytics_store = astore('logit_sas_iml_astore', 'scoreFunc', beta, varNames, outVars);
 endsource;
 iml / code=score_model, nthreads=8;
 run;
@@ -120,8 +123,9 @@ quit;
 * Scored Table *
 ****************/
 
-proc print data=casuser.aml_bank_score(obs=5);
+proc print data=casuser.logit_sas_iml_score(obs=5);
    var P_ml_indicator1
+	   P_ml_indicator0
 		marital_status_single				
 		checking_only_indicator
 		prior_ctr_indicator
@@ -139,12 +143,13 @@ run;
 *************************/
 
 proc astore;
-	score rstore=casuser.aml_bank_astore data=casuser.aml_bank_prep
-					out=casuser.aml_bank_score_astore copyVars=(_ALL_);
+	score rstore=casuser.logit_sas_iml_astore data=casuser.aml_bank_prep
+					out=casuser.logit_sas_iml_score copyVars=(_ALL_);
 run;
 
-proc print data=casuser.aml_bank_score_astore(obs=5);
+proc print data=casuser.logit_sas_iml_score(obs=5);
    var P_ml_indicator1
+	   P_ml_indicator0
 		marital_status_single				
 		checking_only_indicator
 		prior_ctr_indicator

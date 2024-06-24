@@ -30,6 +30,56 @@ proc cas;
  proc print data = casuser.insurance_claims_synth_out;
  run;
 
+proc sgplot data=casuser.insurance_claims_auto;
+	title "original";
+	histogram new_driver;
+	density new_driver;
+	density new_driver / type=kernel;
+	keylegend / location = inside position = topright;
+run;
+title;
+
+proc sgplot data=casuser.insurance_claims_synth_out;
+	title "synthetic";
+	histogram new_driver;
+	density new_driver;
+	density new_driver / type=kernel;
+	keylegend / location = inside position = topright;
+run;
+title;
+
+proc sgplot data=casuser.insurance_claims_auto;
+	title "original";
+	density new_driver / type=kernel;
+run;
+title;
+
+proc sgplot data=casuser.insurance_claims_synth_out;
+	title "synthetic";
+	density new_driver / type=kernel;
+run;
+title;
+
+/* the binary variable new_driver is treated as an interval var.
+  if you change it to nominal, such as income, you'll get a smoother distributions.
+  interesting to note that the original var was 80/20 (0/1) split while the synthetic data 
+  are 60/40, so it appears that the model is balancing out the sample.  
+  for interval vars, like income, the distribution is similar, but it does come up with 
+  some negative values.  i'll have to check to see if there is a way to parameterize 
+  these boundaries. */
+
+proc sgplot data=casuser.insurance_claims_auto;
+	title "original";
+	density income / type=kernel;
+run;
+title;
+
+proc sgplot data=casuser.insurance_claims_synth_out;
+	title "synthetic";
+	density income / type=kernel;
+run;
+title;
+
 /*                             vars = 
 							{"claim_indicator",
 							 "new_driver",
