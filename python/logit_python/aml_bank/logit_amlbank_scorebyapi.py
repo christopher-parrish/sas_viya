@@ -30,6 +30,7 @@ print(conn.serverstatus())
 #################
 
 from requests import request
+import json
 
 # url = session + '/SASLogon/oauth/token' 
 # r = request('POST', url,
@@ -60,6 +61,8 @@ for key in r.json()['items']:
 
 #model_name = 'logit_sas_iml_amlbank_sasstudio' # all lower case
 model_name = 'logit_python_aml_bank' # all lower case
+model_name = 'logit_python_api_aml_bank_workbe'
+# model_name may be truncated in MAS - confirm in History of MM project
 
 headers = {'Authorization': 'Bearer ' + access_token}
 url = session + '/microanalyticScore/modules/' + model_name + '/steps'
@@ -88,7 +91,8 @@ headers = {'Content-Type': 'application/vnd.sas.microanalytic.module.step.input+
                'Authorization': 'Bearer ' + access_token}
 url = session + '/microanalyticScore/modules/' + model_name + '/steps/score'
 r = request('POST', url, data=data, headers=headers, verify=False)
-score_val = (r.json()['outputs'][2]['value'])
+r.json()
+score_val = (r.json()['outputs'][2]['value']) # Python models use 2, SAS models use 1
 score_val = "{0:.2%}".format(score_val)
 
 
