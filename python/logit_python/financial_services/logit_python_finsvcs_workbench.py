@@ -8,7 +8,11 @@
 
 import pandas as pd
 
-dm_inputdf = pd.read_csv("/workspaces/workspace/data/financial_services_prep.csv", header=0)
+data_dir = "/workspaces/chris_parrish/sas_viya/data/financial_services"
+workspace_dir = "/workspaces/chris_parrish/_chris_demo"
+data_table = "financial_services_prep.csv"
+
+dm_inputdf = pd.read_csv(Path(data_dir) / data_table, header=0)
 print(dm_inputdf.dtypes)
 
 ########################
@@ -135,7 +139,8 @@ print('score_valid:', dm_model.score(X_valid, y_valid))
 
 import pickle
 
-dm_pklpath = "/workspaces/workspace/data/financial_services.pkl"
+pickle_file = 'financial_servies_pickle.pkl'
+dm_pklpath = Path(workspace_dir)/pickle_file
 
 with open(dm_pklpath, 'wb') as f:
 	pickle.dump(dm_model, f)
@@ -166,10 +171,12 @@ print('score_valid:', dm_model.score(X_valid, y_valid))
 ### Save Model as Astore File ###
 #################################
 
-dm_model.export(file="/workspaces/workspace/data/financial_services.astore", replace=True)
+astore = "financial_services_astore"
+dm_model.export(file=Path(workspace_dir)/astore, replace=True)
 
 ###########################
 ### Save Model in Table ###
 ###########################
 
-dm_model.save("/workspaces/workspace/data/financial_services.model")
+model_table = "financial_services_model"
+dm_model.save(Path(workspace_dir)/model_table)
