@@ -1,0 +1,52 @@
+import math
+import pickle
+import pandas as pd
+import numpy as np
+from pathlib import Path
+
+import settings
+
+with open(Path(settings.pickle_path) / "logit_python_aml_bank_sagemaker.pickle", "rb") as pickle_model:
+    model = pickle.load(pickle_model)
+
+def score(marital_status_single, checking_only_indicator, prior_ctr_indicator, address_change_2x_indicator, cross_border_trx_indicator, in_person_contact_indicator, linkedin_indicator, citizenship_country_risk, distance_to_employer, distance_to_bank):
+    "Output: P_ml_indicator0, P_ml_indicator1, I_ml_indicator"
+
+    try:
+        global model
+    except NameError:
+        with open(Path(settings.pickle_path) / "logit_python_aml_bank_sagemaker.pickle", "rb") as pickle_model:
+            model = pickle.load(pickle_model)
+
+
+    index=None
+    if not isinstance(marital_status_single, pd.Series):
+        index=[0]
+    input_array = pd.DataFrame(
+        {"marital_status_single": marital_status_single, "checking_only_indicator":
+        checking_only_indicator, "prior_ctr_indicator": prior_ctr_indicator,
+        "address_change_2x_indicator": address_change_2x_indicator,
+        "cross_border_trx_indicator": cross_border_trx_indicator,
+        "in_person_contact_indicator": in_person_contact_indicator,
+        "linkedin_indicator": linkedin_indicator, "citizenship_country_risk":
+        citizenship_country_risk, "distance_to_employer": distance_to_employer,
+        "distance_to_bank": distance_to_bank}, index=index
+    )
+    prediction = model.predict_proba(input_array).tolist()
+
+    # Check for numpy values and convert to a CAS readable representation
+    if isinstance(prediction, np.ndarray):
+        prediction = prediction.tolist()
+
+    if input_array.shape[0] == 1:
+        if prediction[0][1] > 0.5:
+            I_ml_indicator = "1"
+        else:
+            I_ml_indicator = "0"
+        return prediction[0][0], prediction[0][1], I_ml_indicator
+    else:
+        df = pd.DataFrame(prediction)
+        proba_not = df[0]
+        proba = df[1]
+        classifications = np.where(df[1] > 0.5, '1', '0')
+        return pd.DataFrame({'P_ml_indicator0': proba_not, 'P_ml_indicator1': proba, 'I_ml_indicator': classifications})
