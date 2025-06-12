@@ -1,2 +1,0 @@
-﻿ruleset_id,ruleset_nm,folder_path,ruleset_desc,rule_id,rule_nm,rule_desc,rule_seq_no,conditional,record_rule_fired_flag,datatype,lhs_term,expression,expression_type,expression_order
-afb7e962-7ebf-4203-a849-22beacd2d5dd,review,/Users/[directory to place files]/decisioning_rules,,acd3581a-8822-416b-a4f6-e40541720bf5,Default_assignment_4,assignment,1,if,N,,,review_decision = 'review',ACTION,1

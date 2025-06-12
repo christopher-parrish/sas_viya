@@ -1,0 +1,44 @@
+﻿column_name,column_label
+account_id,unique identifier
+performance_period_stress,performance period (beg_value) and associated allocation stresses for each period
+event_indicator,"indicator for a financial services event no:0, yes:1"
+gender,"indicator for gender male:0, female:1"
+ever_missed_obligation,indicator for financial services customer ever missed a required obligation over the past 10 years
+at_current_job_1_year,indicator for financial services customer at their current job for at least 1 year
+smoker,indicator for financial services customer is a smoker
+uses_direct_deposit,indicator for financial services customer uses direct deposit
+business_owner,indicator for financial services customer is a business owner
+homeowner,indicator for financial services customer is a homeowner
+auto_owner,indicator for financial services customer owns a car
+card_testing,"indicator for financial services customer credit card flagged as ""tested"""
+city_state_match,indicator for city_state of application matches city_state of applicant's address
+synthetic_identity,indicator for possible synthetic identity in past 10 years
+income_high,indicator for income higher than expected
+non_military_disability,"indicator for non-military related disability no:0, yes:1"
+marital_status,"Single:0, Married:1, Divorced:2"
+living_status,"own:0, mortgage:1, rent:2, other:3"
+credit_purpose,"auto:0, mortgage:1, consolidation:2, education:3, other:4"
+identity_match,"degree of identity verification: inconclusive:0, poor:1, fair:2, good:3, excellent:4"
+military_status,"none:0, active_duty:1, reserves:2, retired:3, disabled:4, wartime_vet: 5"
+application_day,"day of the week application submitted Sunday:0, Monday:1…"
+num_dependents,number of children in financial services customer's household
+job_industry,"Education:0, Energy:1, Media and Advertising:2, Transportation:3, Hospitality:4, Healthcare:5, Manufacturing:6: Financial Services:7"
+citizenship,"US:0, Canada:1, Mexico:2, India:3, China:4, LATAM:5, EU:6: Africa:7"
+region,"California:0, New York:1, Florida:2, Texas:3, NE:4, South:5, MidWest:6: West:7"
+self_id_race_ethnicity,"White/Caucasian:0, Black/African-American:1, Asian: 2, Indigenous/Native American:3, Hawaiian/Pacific Islander: 4, Hispanic/Latino(a): 5, Multiracial: 6, Other:7"
+application_hour,hour of the day application submitted 12AM:0; 1AM:1…
+years_at_residence,number of years financial services customer has lived in current residence
+age,age of financial services customer
+debt_to_income,debt to income ratio of financial services customer
+city_state,city_state of credit application
+credit_utilization,total credit outstanding / total available credit
+num_transactions,number of transactions financial services customer has made over the past year in account
+credit_history_mos,number of months of financial services customer's credit history
+credit_score,credit score of financial services customer
+amount,amount associated with financial services customer's account
+credit_request_duration,request for amount repay period in months
+net_worth,net worth of financial services customer
+id_important_activity,indicator for a recent important activity involving financial services customer for decisioning rule
+id_direct_contact,indicator for recent contact with financial services customer for decisioning rule
+id_current_fs_relationship,indicator for financial services has an existing relationship for decisioning rule
+ssn,social security number

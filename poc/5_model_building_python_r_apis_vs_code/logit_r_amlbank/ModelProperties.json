@@ -1,0 +1,16 @@
+{
+  "name": "logit_r_amlbank",
+  "description": "Logistic Regression",
+  "function": "Classification",
+  "scoreCodeType": "R",
+  "trainTable": "AML_BANK_PREP",
+  "trainCodeType": "R",
+  "algorithm": "Logistic Regression",
+  "targetVariable": "ml_indicator",
+  "targetEvent": "1",
+  "targetLevel": "Binary",
+  "eventProbVar": "P_ml_indicator1",
+  "modeler": "Parrish",
+  "tool": "R",
+  "toolVersion": "4.4.1"
+}

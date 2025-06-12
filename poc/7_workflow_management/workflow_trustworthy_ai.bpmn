@@ -1,0 +1,397 @@
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:sasbpmn="http://www.sas.com/xml/schema/bpmn" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/Test" typeLanguage="http://www.w3.org/2001/XMLSchema">
+    <process id="WF7D46C447-8A63-463E-B544-2251C97B4918" isExecutable="true" name="insurance_workflow_trustworthy_ai">
+        <extensionElements>
+            <sasbpmn:prompt dataObjectRef="WF31AE657C-6BEF-433F-B73B-F62EE91F9BCE" id="prompt_5fda11ba-1523-4b37-932b-991cc72e0369" name="Identify project workflow owner"/>
+            <sasbpmn:prompt dataObjectRef="WFB63F422E-84ED-4872-BBA1-6EB53319C3E2" id="prompt_1a381acc-cbdc-4b63-acc3-9f71fa803ade" name="List primary data scientist for project"/>
+            <sasbpmn:prompt dataObjectRef="dataObject_c728dfe3-ab40-4eef-8242-a36b16a1969c" id="prompt_d7fa4394-878d-4b7c-aff2-2a779bc1750d" name="Identify data engineer for project"/>
+            <sasbpmn:prompt dataObjectRef="dataObject_94fd7c85-7204-46d6-870d-885e03d7f92a" id="prompt_113dcc56-f306-4ffe-8a87-f8dab329db8a" name="Identify data owner for project"/>
+            <sasbpmn:prompt dataObjectRef="WF96394539-A4F2-4796-A852-DA5FB783F92D" id="WF887857B5-414C-4E21-A2DB-A2C79BC61FEB" name="Identify data approver for project"/>
+            <sasbpmn:prompt dataObjectRef="WF18B188A4-B98A-4EF8-A621-DD793C4848C6" id="WF8EFF68A9-9E53-476B-B8FF-9FE238F5D7BB" name="Identify model approver for models in project"/>
+            <sasbpmn:prompt dataObjectRef="WFF1D76CFF-5374-4A14-91B9-87DFDE6BB7AA" id="WF714113DF-E3B1-4844-BD1A-D314962136DC" name="Identify ModelOps owner for project"/>
+            <sasbpmn:prompt dataObjectRef="WF45A9CBE7-11EB-4654-8F31-31C6CE47C9C5" id="WF477552BA-1621-45ED-99A2-824D42F3686B" name="Which tables are being used in this project?  List all that apply."/>
+            <sasbpmn:prompt dataObjectRef="WFD62EC92A-B371-4923-B9BA-BCF9C94E21FE" id="WFBE7A86B7-C6B6-4BE2-BC67-1668EAF871D5" name="What is the status of the table(s) identified in prior step?"/>
+            <sasbpmn:prompt dataObjectRef="WF9DC48465-BA33-419F-9551-DB75D32A9DA8" id="WF4122E776-A458-45B6-9841-7AA9A2FD5B7D" name="Which columns or other data are identified as sensitive?"/>
+            <sasbpmn:prompt dataObjectRef="WFABB53CDD-C882-4E42-9A1B-8399B6EA1D96" id="WF338A3DD3-3D39-44F7-8FA3-87CDB1D5B6E1" name="What was done, if anything, to address sensitive data identified in this project?"/>
+            <sasbpmn:prompt dataObjectRef="WFD96494E8-3294-42C4-A3F5-3522A9B6366F" id="WFD8A8C768-BC44-4D9D-AF92-39D8D344DD26" name="What steps have been taken to identify and mitigate bias in the modeling process?"/>
+            <sasbpmn:prompt dataObjectRef="WFB8BDA6E6-51AC-47DE-A8F6-2D9D1DF7BA42" id="WFE1CE8E95-E3C9-47A7-A49C-888DBAB23F8A" name="As Model Approver, has the model development team adequately described and addressed potentially biased data in the model?"/>
+            <sasbpmn:prompt dataObjectRef="WFB2F1F72A-4667-42E7-931F-B695B8E9FAFD" id="WF4BD62EDA-F361-4917-91F9-AD26C354EBB6" name="What next steps, if any, are required from the model development team to address bias in the project?"/>
+            <sasbpmn:prompt dataObjectRef="WF1E186AE4-9A67-4A71-B494-6B541D3BC72E" id="WF9F4A56FF-A32A-4EB5-9CD9-13BB715F1EC1" name="Other key project contributors"/>
+            <sasbpmn:promptValue id="WF52AAB268-F362-4E19-A32F-696CC9C19E5A" name="Yes" type="xsd:string" value="Yes"/>
+            <sasbpmn:promptValue id="WF42A39118-112B-458E-995B-D6ED1FDEBC54" name="No" type="xsd:string" value="No"/>
+            <sasbpmn:promptValue id="WF95FC73C6-4528-48FB-845A-78C54E7CDFFE" name="Review" type="xsd:string" value="under review"/>
+            <sasbpmn:promptValue id="WFCEC146D5-F84B-48CD-9B1B-ACDD69377C3A" name="Approved" type="xsd:string" value="approved for use"/>
+            <sasbpmn:promptValue id="WFBC941F15-C13B-46F7-98DC-D2E6C8285F77" name="Flagged" type="xsd:string" value="needs attention"/>
+            <sasbpmn:promptValue id="WF8E1FE582-F892-4FE9-962B-25DBAF6E1A32" name="Warning" type="xsd:string" value="should not be used"/>
+            <sasbpmn:promptValue id="WFBF7E68DB-69D1-49CF-AA19-F5644738B629" name="None" type="xsd:string" value="default status"/>
+            <sasbpmn:diagram nodeDisplay="compact"/>
+        </extensionElements>
+        <dataObject id="dataObject_60f9ec0d-92c4-4976-8889-495e78429e31" itemSubjectRef="xsd:string" name="modelProjectId">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="dataObject_c728dfe3-ab40-4eef-8242-a36b16a1969c" itemSubjectRef="xsd:string" name="dataEngineer">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="dataObject_94fd7c85-7204-46d6-870d-885e03d7f92a" itemSubjectRef="xsd:string" name="dataOwner">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="dataObject_8af0255b-cdce-4e6a-86c4-f51541575fa5" itemSubjectRef="xsd:string" name="projectName">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF31AE657C-6BEF-433F-B73B-F62EE91F9BCE" itemSubjectRef="xsd:string" name="projectOwner">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF96394539-A4F2-4796-A852-DA5FB783F92D" itemSubjectRef="xsd:string" name="dataApprover">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF18B188A4-B98A-4EF8-A621-DD793C4848C6" itemSubjectRef="xsd:string" name="modelApprover">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFF1D76CFF-5374-4A14-91B9-87DFDE6BB7AA" itemSubjectRef="xsd:string" name="modelopsOwner">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF45A9CBE7-11EB-4654-8F31-31C6CE47C9C5" itemSubjectRef="xsd:string" name="dataTables">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFD62EC92A-B371-4923-B9BA-BCF9C94E21FE" itemSubjectRef="xsd:string" name="tablesStatus">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF9DC48465-BA33-419F-9551-DB75D32A9DA8" itemSubjectRef="xsd:string" name="sensitiveData">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFABB53CDD-C882-4E42-9A1B-8399B6EA1D96" itemSubjectRef="xsd:string" name="sensitiveDataMitigation">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFB63F422E-84ED-4872-BBA1-6EB53319C3E2" itemSubjectRef="xsd:string" name="dataScientist">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFD96494E8-3294-42C4-A3F5-3522A9B6366F" itemSubjectRef="xsd:string" name="biasIdentification">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFB8BDA6E6-51AC-47DE-A8F6-2D9D1DF7BA42" itemSubjectRef="xsd:string" name="biasReviewApproval">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WFB2F1F72A-4667-42E7-931F-B695B8E9FAFD" itemSubjectRef="xsd:string" name="biasReviewNextSteps">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <dataObject id="WF1E186AE4-9A67-4A71-B494-6B541D3BC72E" itemSubjectRef="xsd:string" name="otherContributors">
+            <extensionElements>
+                <flowable:value/>
+            </extensionElements>
+        </dataObject>
+        <sequenceFlow id="WFF25CF4B8-887F-4B2A-AEB6-B2A788BA2654" sourceRef="WFC6356B48-5C44-4FFE-A3A6-2F61533F5284" targetRef="WFC5367F34-85D4-453E-AF5E-F72A28FC4C8E"/>
+        <sequenceFlow id="WF37C8EB3F-EAB6-4FAE-8ED6-97D832518633" sourceRef="WFC5367F34-85D4-453E-AF5E-F72A28FC4C8E" targetRef="WF1B15E51D-D89F-4CF8-9214-211762585479"/>
+        <sequenceFlow id="WFEA29EC5E-5AAB-4A26-8D33-F43FF9D27AB2" sourceRef="WF1B15E51D-D89F-4CF8-9214-211762585479" targetRef="WF969658F6-95AE-48AC-BF9A-3CAD93DC6CCF"/>
+        <sequenceFlow id="WF59C69A23-6C73-4BA8-998C-8AE6E4693539" sourceRef="WF969658F6-95AE-48AC-BF9A-3CAD93DC6CCF" targetRef="WFAA749EF6-C242-4BB9-9BFE-61238FECA223"/>
+        <sequenceFlow id="WFA3C8E9CA-21B5-4C86-997F-AA71D7BC89EA" sourceRef="WFAA749EF6-C242-4BB9-9BFE-61238FECA223" targetRef="WFD1193692-8269-4AB8-82DA-B95D5FFC3BEC"/>
+        <sequenceFlow id="WF5B3AE837-EB9A-467F-B61D-9DBE1E89B95F" sourceRef="WFD1193692-8269-4AB8-82DA-B95D5FFC3BEC" targetRef="EndWorkflow"/>
+        <sequenceFlow id="WFD7C5BD86-F44A-4ADD-A988-195A55BF9FFD" sourceRef="ModelsTrained" targetRef="WF7DA42D2F-414D-416C-98AE-699C51BF27CB"/>
+        <sequenceFlow id="WFDF41DC24-BED8-428C-B22C-5D8C6ACF39BC" sourceRef="WF7DA42D2F-414D-416C-98AE-699C51BF27CB" targetRef="GetProjectInfo"/>
+        <sequenceFlow id="WFDFD3DD4F-F2FD-42D1-9C34-CC7F9148857E" sourceRef="GetProjectInfo" targetRef="WFC6356B48-5C44-4FFE-A3A6-2F61533F5284"/>
+        <startEvent id="ModelsTrained" name="Assign Project Owner">
+            <documentation>Assign Project Owner</documentation>
+            <extensionElements>
+                <sasbpmn:promptDefinition promptRef="prompt_5fda11ba-1523-4b37-932b-991cc72e0369" required="true"/>
+                <sasbpmn:attributes>
+                    <sasbpmn:attribute name="Identify project workflow owner" predefined="true" value="select_potential_owner"/>
+                </sasbpmn:attributes>
+            </extensionElements>
+        </startEvent>
+        <serviceTask flowable:delegateExpression="${restTask}" id="GetProjectInfo" name="Project Information">
+            <documentation>Get project information</documentation>
+            <extensionElements>
+                <flowable:field name="url">
+                    <flowable:expression><![CDATA[/modelRepository/projects/${modelProjectId}]]></flowable:expression>
+                </flowable:field>
+                <flowable:field name="method">
+                    <flowable:string><![CDATA[GET]]></flowable:string>
+                </flowable:field>
+                <flowable:field name="statusCode">
+                    <flowable:string><![CDATA[200]]></flowable:string>
+                </flowable:field>
+                <flowable:field name="bodyType">
+                    <flowable:string><![CDATA[EMPTY]]></flowable:string>
+                </flowable:field>
+                <flowable:field name="headers">
+                    <flowable:string><![CDATA[{"Accept":"application/json"}]]></flowable:string>
+                </flowable:field>
+                <flowable:executionListener delegateExpression="${jsonPathListener}" event="end">
+                    <flowable:field name="json">
+                        <flowable:expression><![CDATA[${responseBody}]]></flowable:expression>
+                    </flowable:field>
+                    <flowable:field name="outputDataObjectName">
+                        <flowable:string><![CDATA[projectName]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="optional">
+                        <flowable:string><![CDATA[false]]></flowable:string>
+                    </flowable:field>
+                    <flowable:field name="jsonPath">
+                        <flowable:string><![CDATA[$.name]]></flowable:string>
+                    </flowable:field>
+                </flowable:executionListener>
+            </extensionElements>
+        </serviceTask>
+        <endEvent id="EndWorkflow" name="End Workflow">
+            <documentation>End workflow.</documentation>
+        </endEvent>
+        <userTask id="WF7DA42D2F-414D-416C-98AE-699C51BF27CB" name="Project Stakeholders">
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${projectOwner}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="prompt_d7fa4394-878d-4b7c-aff2-2a779bc1750d" required="true"/>
+                <sasbpmn:promptDefinition promptRef="prompt_113dcc56-f306-4ffe-8a87-f8dab329db8a" required="true"/>
+                <sasbpmn:promptDefinition promptRef="WF887857B5-414C-4E21-A2DB-A2C79BC61FEB" required="true"/>
+                <sasbpmn:promptDefinition promptRef="prompt_1a381acc-cbdc-4b63-acc3-9f71fa803ade" required="true"/>
+                <sasbpmn:promptDefinition promptRef="WF8EFF68A9-9E53-476B-B8FF-9FE238F5D7BB" required="false"/>
+                <sasbpmn:promptDefinition promptRef="WF714113DF-E3B1-4844-BD1A-D314962136DC" required="false"/>
+                <sasbpmn:promptDefinition promptRef="WF9F4A56FF-A32A-4EB5-9CD9-13BB715F1EC1" required="true"/>
+                <sasbpmn:attributes>
+                    <sasbpmn:attribute name="Identify data engineer for project" predefined="true" value="select_potential_owner"/>
+                    <sasbpmn:attribute name="Identify data owner for project" predefined="true" value="select_potential_owner"/>
+                    <sasbpmn:attribute name="Identify data approver for project" predefined="true" value="select_potential_owner"/>
+                    <sasbpmn:attribute name="Identify model approver for models in project" predefined="true" value="select_potential_owner"/>
+                    <sasbpmn:attribute name="Identify ModelOps owner for project" predefined="true" value="select_potential_owner"/>
+                    <sasbpmn:attribute name="List primary data scientist for project" predefined="true" value="select_potential_owner"/>
+                </sasbpmn:attributes>
+            </extensionElements>
+        </userTask>
+        <userTask id="WFC6356B48-5C44-4FFE-A3A6-2F61533F5284" name="Tables in Project">
+            <documentation>Identify tables used in project.</documentation>
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${projectOwner}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WF477552BA-1621-45ED-99A2-824D42F3686B" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="WF969658F6-95AE-48AC-BF9A-3CAD93DC6CCF" name="Table status">
+            <documentation>Review tables used in project for status.</documentation>
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${dataOwner}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WFBE7A86B7-C6B6-4BE2-BC67-1668EAF871D5" required="true">
+                    <sasbpmn:promptValueDefinition promptValueRef="WF95FC73C6-4528-48FB-845A-78C54E7CDFFE"/>
+                    <sasbpmn:promptValueDefinition promptValueRef="WFCEC146D5-F84B-48CD-9B1B-ACDD69377C3A"/>
+                    <sasbpmn:promptValueDefinition promptValueRef="WFBC941F15-C13B-46F7-98DC-D2E6C8285F77"/>
+                    <sasbpmn:promptValueDefinition promptValueRef="WF8E1FE582-F892-4FE9-962B-25DBAF6E1A32"/>
+                    <sasbpmn:promptValueDefinition promptValueRef="WFBF7E68DB-69D1-49CF-AA19-F5644738B629"/>
+                </sasbpmn:promptDefinition>
+            </extensionElements>
+        </userTask>
+        <userTask id="WFC5367F34-85D4-453E-AF5E-F72A28FC4C8E" name="Identify Sensitive Data">
+            <documentation>Review table information and document sensitive data.</documentation>
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${dataScientist}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WF4122E776-A458-45B6-9841-7AA9A2FD5B7D" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="WF1B15E51D-D89F-4CF8-9214-211762585479" name="Address Sensitive Data">
+            <documentation>What was done, if anything, to address sensitive data?</documentation>
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${dataScientist}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WF338A3DD3-3D39-44F7-8FA3-87CDB1D5B6E1" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="WFAA749EF6-C242-4BB9-9BFE-61238FECA223" name="Data Bias Identification">
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${dataScientist}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WFD8A8C768-BC44-4D9D-AF92-39D8D344DD26" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="WFD1193692-8269-4AB8-82DA-B95D5FFC3BEC" name="Bias Review Approval">
+            <extensionElements>
+                <flowable:taskListener delegateExpression="${jsonParticipantListener}" event="create">
+                    <flowable:field name="participants">
+                        <flowable:expression><![CDATA[${modelApprover}]]></flowable:expression>
+                    </flowable:field>
+                </flowable:taskListener>
+                <sasbpmn:promptDefinition promptRef="WFE1CE8E95-E3C9-47A7-A49C-888DBAB23F8A" required="true">
+                    <sasbpmn:promptValueDefinition promptValueRef="WF52AAB268-F362-4E19-A32F-696CC9C19E5A"/>
+                    <sasbpmn:promptValueDefinition promptValueRef="WF42A39118-112B-458E-995B-D6ED1FDEBC54"/>
+                </sasbpmn:promptDefinition>
+                <sasbpmn:promptDefinition promptRef="WF4BD62EDA-F361-4917-91F9-AD26C354EBB6" required="true"/>
+            </extensionElements>
+        </userTask>
+        <textAnnotation id="WF329B89F6-7BF2-4627-B85B-F5FEF41D5385">
+            <text>Workflow Steps:
+
+1) Project owner is identified and project information is captured
+
+2) Project owner selects other project stakeholders
+
+3) Project owner lists data tables used in project
+
+4) Data scientist identifies sensitive data in the tables and checks for data quality
+
+5) Data scientist documents action plan to address sensitive data in model development process
+
+6) Data Owner sets data table status
+
+7) Data scientist documents bias, if any, of the data used in modeling
+
+8) Model Approver reviews bias assessments and determines next steps for model development
+
+</text>
+        </textAnnotation>
+    </process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_WF7D46C447-8A63-463E-B544-2251C97B4918">
+        <bpmndi:BPMNPlane bpmnElement="WF7D46C447-8A63-463E-B544-2251C97B4918" id="BPMNPlane_WF7D46C447-8A63-463E-B544-2251C97B4918">
+            <bpmndi:BPMNShape bpmnElement="ModelsTrained" id="BPMNShape_ModelsTrained">
+                <omgdc:Bounds height="36.0" width="36.0" x="120.0" y="-120.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="GetProjectInfo" id="BPMNShape_GetProjectInfo">
+                <omgdc:Bounds height="16.0" width="16.0" x="320.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="EndWorkflow" id="BPMNShape_EndWorkflow">
+                <omgdc:Bounds height="36.0" width="36.0" x="1110.0" y="-120.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WF7DA42D2F-414D-416C-98AE-699C51BF27CB" id="BPMNShape_WF7DA42D2F-414D-416C-98AE-699C51BF27CB">
+                <omgdc:Bounds height="36.0" width="148.0" x="200.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WFC6356B48-5C44-4FFE-A3A6-2F61533F5284" id="BPMNShape_WFC6356B48-5C44-4FFE-A3A6-2F61533F5284">
+                <omgdc:Bounds height="36.0" width="148.0" x="440.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WF969658F6-95AE-48AC-BF9A-3CAD93DC6CCF" id="BPMNShape_WF969658F6-95AE-48AC-BF9A-3CAD93DC6CCF">
+                <omgdc:Bounds height="36.0" width="148.0" x="820.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WFC5367F34-85D4-453E-AF5E-F72A28FC4C8E" id="BPMNShape_WFC5367F34-85D4-453E-AF5E-F72A28FC4C8E">
+                <omgdc:Bounds height="36.0" width="148.0" x="560.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WF1B15E51D-D89F-4CF8-9214-211762585479" id="BPMNShape_WF1B15E51D-D89F-4CF8-9214-211762585479">
+                <omgdc:Bounds height="36.0" width="148.0" x="690.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WFAA749EF6-C242-4BB9-9BFE-61238FECA223" id="BPMNShape_WFAA749EF6-C242-4BB9-9BFE-61238FECA223">
+                <omgdc:Bounds height="36.0" width="148.0" x="940.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WFD1193692-8269-4AB8-82DA-B95D5FFC3BEC" id="BPMNShape_WFD1193692-8269-4AB8-82DA-B95D5FFC3BEC">
+                <omgdc:Bounds height="36.0" width="148.0" x="1060.0" y="20.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="WF329B89F6-7BF2-4627-B85B-F5FEF41D5385" id="BPMNShape_WF329B89F6-7BF2-4627-B85B-F5FEF41D5385">
+                <omgdc:Bounds height="285.0" width="1053.0" x="620.0" y="-298.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge bpmnElement="WFF25CF4B8-887F-4B2A-AEB6-B2A788BA2654" id="BPMNEdge_WFF25CF4B8-887F-4B2A-AEB6-B2A788BA2654">
+                <omgdi:waypoint x="460.0" y="20.0"/>
+                <omgdi:waypoint x="490.0" y="20.0"/>
+                <omgdi:waypoint x="490.0" y="20.0"/>
+                <omgdi:waypoint x="490.0" y="20.0"/>
+                <omgdi:waypoint x="519.0" y="20.0"/>
+                <omgdi:waypoint x="539.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WF37C8EB3F-EAB6-4FAE-8ED6-97D832518633" id="BPMNEdge_WF37C8EB3F-EAB6-4FAE-8ED6-97D832518633">
+                <omgdi:waypoint x="580.0" y="20.0"/>
+                <omgdi:waypoint x="610.0" y="20.0"/>
+                <omgdi:waypoint x="630.0" y="20.0"/>
+                <omgdi:waypoint x="630.0" y="20.0"/>
+                <omgdi:waypoint x="649.0" y="20.0"/>
+                <omgdi:waypoint x="669.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WFEA29EC5E-5AAB-4A26-8D33-F43FF9D27AB2" id="BPMNEdge_WFEA29EC5E-5AAB-4A26-8D33-F43FF9D27AB2">
+                <omgdi:waypoint x="710.0" y="20.0"/>
+                <omgdi:waypoint x="740.0" y="20.0"/>
+                <omgdi:waypoint x="740.0" y="20.0"/>
+                <omgdi:waypoint x="740.0" y="20.0"/>
+                <omgdi:waypoint x="779.0" y="20.0"/>
+                <omgdi:waypoint x="799.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WF59C69A23-6C73-4BA8-998C-8AE6E4693539" id="BPMNEdge_WF59C69A23-6C73-4BA8-998C-8AE6E4693539">
+                <omgdi:waypoint x="840.0" y="20.0"/>
+                <omgdi:waypoint x="870.0" y="20.0"/>
+                <omgdi:waypoint x="885.0" y="20.0"/>
+                <omgdi:waypoint x="885.0" y="20.0"/>
+                <omgdi:waypoint x="899.0" y="20.0"/>
+                <omgdi:waypoint x="919.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WFA3C8E9CA-21B5-4C86-997F-AA71D7BC89EA" id="BPMNEdge_WFA3C8E9CA-21B5-4C86-997F-AA71D7BC89EA">
+                <omgdi:waypoint x="960.0" y="20.0"/>
+                <omgdi:waypoint x="990.0" y="20.0"/>
+                <omgdi:waypoint x="1005.0" y="20.0"/>
+                <omgdi:waypoint x="1005.0" y="20.0"/>
+                <omgdi:waypoint x="1019.0" y="20.0"/>
+                <omgdi:waypoint x="1039.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WF5B3AE837-EB9A-467F-B61D-9DBE1E89B95F" id="BPMNEdge_WF5B3AE837-EB9A-467F-B61D-9DBE1E89B95F">
+                <omgdi:waypoint x="1060.0" y="0.0"/>
+                <omgdi:waypoint x="1060.0" y="-30.0"/>
+                <omgdi:waypoint x="1060.0" y="-57.0"/>
+                <omgdi:waypoint x="1110.0" y="-57.0"/>
+                <omgdi:waypoint x="1110.0" y="-85.0"/>
+                <omgdi:waypoint x="1110.0" y="-105.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WFD7C5BD86-F44A-4ADD-A988-195A55BF9FFD" id="BPMNEdge_WFD7C5BD86-F44A-4ADD-A988-195A55BF9FFD">
+                <omgdi:waypoint x="120.0" y="-105.0"/>
+                <omgdi:waypoint x="120.0" y="-75.0"/>
+                <omgdi:waypoint x="120.0" y="-47.0"/>
+                <omgdi:waypoint x="200.0" y="-47.0"/>
+                <omgdi:waypoint x="200.0" y="-20.0"/>
+                <omgdi:waypoint x="200.0" y="0.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WFDF41DC24-BED8-428C-B22C-5D8C6ACF39BC" id="BPMNEdge_WFDF41DC24-BED8-428C-B22C-5D8C6ACF39BC">
+                <omgdi:waypoint x="220.0" y="20.0"/>
+                <omgdi:waypoint x="250.0" y="20.0"/>
+                <omgdi:waypoint x="250.0" y="20.0"/>
+                <omgdi:waypoint x="250.0" y="20.0"/>
+                <omgdi:waypoint x="279.0" y="20.0"/>
+                <omgdi:waypoint x="299.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge bpmnElement="WFDFD3DD4F-F2FD-42D1-9C34-CC7F9148857E" id="BPMNEdge_WFDFD3DD4F-F2FD-42D1-9C34-CC7F9148857E">
+                <omgdi:waypoint x="340.0" y="20.0"/>
+                <omgdi:waypoint x="370.0" y="20.0"/>
+                <omgdi:waypoint x="370.0" y="20.0"/>
+                <omgdi:waypoint x="370.0" y="20.0"/>
+                <omgdi:waypoint x="399.0" y="20.0"/>
+                <omgdi:waypoint x="419.0" y="20.0"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>

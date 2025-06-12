@@ -1,0 +1,18 @@
+[
+  {
+    "role": "inputVariables",
+    "name": "inputVar.json"
+  },
+  {
+    "role": "outputVariables",
+    "name": "outputVar.json"
+  },
+  {
+    "role": "score",
+    "name": "logit_r_finsvcs_score.r"
+  },
+  {
+    "role": "scoreResource",
+    "name": "logit_r_finsvcs.rds"
+  }
+]
