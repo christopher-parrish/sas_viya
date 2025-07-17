@@ -1,0 +1,20 @@
+[
+  {
+    "name": "P_event_indicator0",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "P_event_indicator1",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "I_event_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  }
+]

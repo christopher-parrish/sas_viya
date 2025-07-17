@@ -1,0 +1,164 @@
+[
+  {
+    "name": "account_id",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "num_transactions",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "credit_score",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "marital_status_single",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "marital_status_married",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "marital_status_divorced",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "analytic_partition",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "ml_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "checking_only_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "prior_ctr_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "address_change_2x_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "cross_border_trx_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "in_person_contact_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "linkedin_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "atm_deposit_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "trx_10ksum_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "common_merchant_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "direct_deposit_indicator",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "citizenship_country_risk",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "occupation_risk",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "num_acctbal_chgs_gt2000",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "distance_to_employer",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "distance_to_bank",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "income",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "primary_transfer_cash",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "primary_transfer_check",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  },
+  {
+    "name": "primary_transfer_wire",
+    "length": 8,
+    "type": "decimal",
+    "level": "interval"
+  }
+]

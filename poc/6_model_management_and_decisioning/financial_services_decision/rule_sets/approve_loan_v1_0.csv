@@ -1,0 +1,2 @@
+﻿ruleset_id,ruleset_nm,folder_path,ruleset_desc,rule_id,rule_nm,rule_desc,rule_seq_no,conditional,record_rule_fired_flag,datatype,lhs_term,expression,expression_type,expression_order
+cde67b5c-163b-42f8-a8c2-295a4fc98680,approve_loan,/Financial Banking/07. Build Decisions - SAS Intelligent Decisioning,,47c9f4d4-0b93-4b61-8b78-3cecfa2db5bf,Default_assignment_1,assignment,1,if,N,string,loan_decision,"'approve'",ACTION,1

@@ -1,0 +1,1347 @@
+{
+  "name": "dmcas_lift",
+  "revision": 0,
+  "order": 0,
+  "parameterMap": {
+    "_DataRole_": {
+      "parameter": "_DataRole_",
+      "type": "char",
+      "label": "Data Role",
+      "length": 10,
+      "order": 1,
+      "values": "_DataRole_",
+      "preformatted": false
+    },
+    "_PartInd_": {
+      "parameter": "_PartInd_",
+      "type": "num",
+      "label": "Partition Indicator",
+      "length": 8,
+      "order": 2,
+      "values": "_PartInd_",
+      "preformatted": false
+    },
+    "_PartInd__f": {
+      "parameter": "_PartInd__f",
+      "type": "char",
+      "label": "Formatted Partition",
+      "length": 12,
+      "order": 3,
+      "values": "_PartInd__f",
+      "preformatted": false
+    },
+    "_Column_": {
+      "parameter": "_Column_",
+      "type": "char",
+      "label": "Analysis Variable",
+      "length": 32,
+      "order": 4,
+      "values": "_Column_",
+      "preformatted": false
+    },
+    "_Event_": {
+      "parameter": "_Event_",
+      "type": "char",
+      "label": "Event",
+      "length": 8,
+      "order": 5,
+      "values": "_Event_",
+      "preformatted": false
+    },
+    "_Depth_": {
+      "parameter": "_Depth_",
+      "type": "num",
+      "label": "Depth",
+      "length": 8,
+      "order": 6,
+      "values": "_Depth_",
+      "preformatted": false
+    },
+    "_NObs_": {
+      "parameter": "_NObs_",
+      "type": "num",
+      "label": "Sum of Frequencies",
+      "length": 8,
+      "order": 7,
+      "values": "_NObs_",
+      "preformatted": false
+    },
+    "_Gain_": {
+      "parameter": "_Gain_",
+      "type": "num",
+      "label": "Gain",
+      "length": 8,
+      "order": 8,
+      "values": "_Gain_",
+      "preformatted": false
+    },
+    "_Lift_": {
+      "parameter": "_Lift_",
+      "type": "num",
+      "label": "Lift",
+      "length": 8,
+      "order": 9,
+      "values": "_Lift_",
+      "preformatted": false
+    },
+    "_CumLift_": {
+      "parameter": "_CumLift_",
+      "type": "num",
+      "label": "Cumulative Lift",
+      "length": 8,
+      "order": 10,
+      "values": "_CumLift_",
+      "preformatted": false
+    },
+    "_Resp_": {
+      "parameter": "_Resp_",
+      "type": "num",
+      "label": "Captured Response Percentage",
+      "length": 8,
+      "order": 11,
+      "values": "_Resp_",
+      "preformatted": false
+    },
+    "_CumResp_": {
+      "parameter": "_CumResp_",
+      "type": "num",
+      "label": "Cumulative Captured Response Percentage",
+      "length": 8,
+      "order": 12,
+      "values": "_CumResp_",
+      "preformatted": false
+    },
+    "_PctResp_": {
+      "parameter": "_PctResp_",
+      "type": "num",
+      "label": "% Response",
+      "length": 8,
+      "order": 13,
+      "values": "_PctResp_",
+      "preformatted": false
+    },
+    "_CumPctResp_": {
+      "parameter": "_CumPctResp_",
+      "type": "num",
+      "label": "Cumulative % Response",
+      "length": 8,
+      "order": 14,
+      "values": "_CumPctResp_",
+      "preformatted": false
+    },
+    "_TargetName_": {
+      "parameter": "_TargetName_",
+      "type": "char",
+      "label": "Target Name",
+      "length": 20,
+      "order": 15,
+      "values": "_TargetName_",
+      "preformatted": false
+    }
+  },
+  "data": [
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 5.0163,
+        "_NObs_": 231,
+        "_Gain_": 226,
+        "_Lift_": 3.3547,
+        "_CumLift_": 3.3547,
+        "_Resp_": 16.828,
+        "_CumResp_": 16.828,
+        "_PctResp_": 97.8355,
+        "_CumPctResp_": 97.8355,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 1
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 10.0109,
+        "_NObs_": 230,
+        "_Gain_": 205,
+        "_Lift_": 3.0562,
+        "_CumLift_": 3.2058,
+        "_Resp_": 15.2643,
+        "_CumResp_": 32.0923,
+        "_PctResp_": 89.1304,
+        "_CumPctResp_": 93.4924,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 2
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 15.0054,
+        "_NObs_": 230,
+        "_Gain_": 194,
+        "_Lift_": 2.8922,
+        "_CumLift_": 3.1014,
+        "_Resp_": 14.4453,
+        "_CumResp_": 46.5376,
+        "_PctResp_": 84.3478,
+        "_CumPctResp_": 90.4486,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 3
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 20,
+        "_NObs_": 230,
+        "_Gain_": 180,
+        "_Lift_": 2.6835,
+        "_CumLift_": 2.997,
+        "_Resp_": 13.4028,
+        "_CumResp_": 59.9404,
+        "_PctResp_": 78.2609,
+        "_CumPctResp_": 87.405,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 4
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 24.9946,
+        "_NObs_": 230,
+        "_Gain_": 152,
+        "_Lift_": 2.266,
+        "_CumLift_": 2.851,
+        "_Resp_": 11.3179,
+        "_CumResp_": 71.2584,
+        "_PctResp_": 66.087,
+        "_CumPctResp_": 83.1451,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 5
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 30.0109,
+        "_NObs_": 231,
+        "_Gain_": 115,
+        "_Lift_": 1.707,
+        "_CumLift_": 2.6597,
+        "_Resp_": 8.5629,
+        "_CumResp_": 79.8213,
+        "_PctResp_": 49.7835,
+        "_CumPctResp_": 77.5687,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 6
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 35.0054,
+        "_NObs_": 230,
+        "_Gain_": 76,
+        "_Lift_": 1.133,
+        "_CumLift_": 2.4419,
+        "_Resp_": 5.659,
+        "_CumResp_": 85.4803,
+        "_PctResp_": 33.0435,
+        "_CumPctResp_": 71.2159,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 7
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 40,
+        "_NObs_": 230,
+        "_Gain_": 49,
+        "_Lift_": 0.7305,
+        "_CumLift_": 2.2282,
+        "_Resp_": 3.6485,
+        "_CumResp_": 89.1288,
+        "_PctResp_": 21.3043,
+        "_CumPctResp_": 64.9837,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 8
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 44.9946,
+        "_NObs_": 230,
+        "_Gain_": 43,
+        "_Lift_": 0.6411,
+        "_CumLift_": 2.052,
+        "_Resp_": 3.2018,
+        "_CumResp_": 92.3306,
+        "_PctResp_": 18.6957,
+        "_CumPctResp_": 59.8456,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 9
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 49.9891,
+        "_NObs_": 230,
+        "_Gain_": 27,
+        "_Lift_": 0.4025,
+        "_CumLift_": 1.8872,
+        "_Resp_": 2.0104,
+        "_CumResp_": 94.341,
+        "_PctResp_": 11.7391,
+        "_CumPctResp_": 55.0391,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 10
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 55.0054,
+        "_NObs_": 231,
+        "_Gain_": 24,
+        "_Lift_": 0.3562,
+        "_CumLift_": 1.7476,
+        "_Resp_": 1.787,
+        "_CumResp_": 96.1281,
+        "_PctResp_": 10.3896,
+        "_CumPctResp_": 50.9672,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 11
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 60,
+        "_NObs_": 230,
+        "_Gain_": 21,
+        "_Lift_": 0.3131,
+        "_CumLift_": 1.6282,
+        "_Resp_": 1.5637,
+        "_CumResp_": 97.6917,
+        "_PctResp_": 9.1304,
+        "_CumPctResp_": 47.4846,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 12
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 64.9946,
+        "_NObs_": 230,
+        "_Gain_": 10,
+        "_Lift_": 0.1491,
+        "_CumLift_": 1.5145,
+        "_Resp_": 0.7446,
+        "_CumResp_": 98.4363,
+        "_PctResp_": 4.3478,
+        "_CumPctResp_": 44.1697,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 13
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 69.9891,
+        "_NObs_": 230,
+        "_Gain_": 11,
+        "_Lift_": 0.164,
+        "_CumLift_": 1.4182,
+        "_Resp_": 0.8191,
+        "_CumResp_": 99.2554,
+        "_PctResp_": 4.7826,
+        "_CumPctResp_": 41.359,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 14
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 74.9837,
+        "_NObs_": 230,
+        "_Gain_": 3,
+        "_Lift_": 0.0447,
+        "_CumLift_": 1.3267,
+        "_Resp_": 0.2234,
+        "_CumResp_": 99.4788,
+        "_PctResp_": 1.3043,
+        "_CumPctResp_": 38.691,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 15
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 80,
+        "_NObs_": 231,
+        "_Gain_": 5,
+        "_Lift_": 0.0742,
+        "_CumLift_": 1.2481,
+        "_Resp_": 0.3723,
+        "_CumResp_": 99.8511,
+        "_PctResp_": 2.1645,
+        "_CumPctResp_": 36.4007,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 16
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 84.9946,
+        "_NObs_": 230,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1.1748,
+        "_Resp_": 0,
+        "_CumResp_": 99.8511,
+        "_PctResp_": 0,
+        "_CumPctResp_": 34.2616,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 17
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 89.9891,
+        "_NObs_": 230,
+        "_Gain_": 2,
+        "_Lift_": 0.0298,
+        "_CumLift_": 1.1112,
+        "_Resp_": 0.1489,
+        "_CumResp_": 100,
+        "_PctResp_": 0.8696,
+        "_CumPctResp_": 32.4083,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 18
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 94.9837,
+        "_NObs_": 230,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1.0528,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 30.7042,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 19
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "VALIDATE",
+        "_PartInd_": 0,
+        "_formattedPartition_": "           0",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 100,
+        "_NObs_": 231,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 29.164,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 20
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 5.0054,
+        "_NObs_": 461,
+        "_Gain_": 443,
+        "_Lift_": 3.1939,
+        "_CumLift_": 3.1939,
+        "_Resp_": 15.987,
+        "_CumResp_": 15.987,
+        "_PctResp_": 96.0954,
+        "_CumPctResp_": 96.0954,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 21
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 10,
+        "_NObs_": 460,
+        "_Gain_": 414,
+        "_Lift_": 2.9913,
+        "_CumLift_": 3.0927,
+        "_Resp_": 14.9405,
+        "_CumResp_": 30.9275,
+        "_PctResp_": 90,
+        "_CumPctResp_": 93.051,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 22
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 15.0054,
+        "_NObs_": 461,
+        "_Gain_": 380,
+        "_Lift_": 2.7397,
+        "_CumLift_": 2.975,
+        "_Resp_": 13.7135,
+        "_CumResp_": 44.6409,
+        "_PctResp_": 82.4295,
+        "_CumPctResp_": 89.508,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 23
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 20,
+        "_NObs_": 460,
+        "_Gain_": 356,
+        "_Lift_": 2.5723,
+        "_CumLift_": 2.8744,
+        "_Resp_": 12.8473,
+        "_CumResp_": 57.4883,
+        "_PctResp_": 77.3913,
+        "_CumPctResp_": 86.4821,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 24
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 25.0054,
+        "_NObs_": 461,
+        "_Gain_": 298,
+        "_Lift_": 2.1485,
+        "_CumLift_": 2.7291,
+        "_Resp_": 10.7542,
+        "_CumResp_": 68.2425,
+        "_PctResp_": 64.6421,
+        "_CumPctResp_": 82.1103,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 25
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 30,
+        "_NObs_": 460,
+        "_Gain_": 233,
+        "_Lift_": 1.6835,
+        "_CumLift_": 2.555,
+        "_Resp_": 8.4085,
+        "_CumResp_": 76.651,
+        "_PctResp_": 50.6522,
+        "_CumPctResp_": 76.873,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 26
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 35.0054,
+        "_NObs_": 461,
+        "_Gain_": 194,
+        "_Lift_": 1.3987,
+        "_CumLift_": 2.3897,
+        "_Resp_": 7.0011,
+        "_CumResp_": 83.6521,
+        "_PctResp_": 42.0824,
+        "_CumPctResp_": 71.8983,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 27
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 40,
+        "_NObs_": 460,
+        "_Gain_": 143,
+        "_Lift_": 1.0332,
+        "_CumLift_": 2.2203,
+        "_Resp_": 5.1606,
+        "_CumResp_": 88.8127,
+        "_PctResp_": 31.087,
+        "_CumPctResp_": 66.8024,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 28
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 45.0054,
+        "_NObs_": 461,
+        "_Gain_": 102,
+        "_Lift_": 0.7354,
+        "_CumLift_": 2.0552,
+        "_Resp_": 3.681,
+        "_CumResp_": 92.4937,
+        "_PctResp_": 22.1258,
+        "_CumPctResp_": 61.8335,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 29
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 50,
+        "_NObs_": 460,
+        "_Gain_": 66,
+        "_Lift_": 0.4769,
+        "_CumLift_": 1.8975,
+        "_Resp_": 2.3818,
+        "_CumResp_": 94.8755,
+        "_PctResp_": 14.3478,
+        "_CumPctResp_": 57.0901,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 30
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 54.9946,
+        "_NObs_": 460,
+        "_Gain_": 38,
+        "_Lift_": 0.2746,
+        "_CumLift_": 1.7501,
+        "_Resp_": 1.3713,
+        "_CumResp_": 96.2468,
+        "_PctResp_": 8.2609,
+        "_CumPctResp_": 52.6555,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 31
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 60,
+        "_NObs_": 461,
+        "_Gain_": 34,
+        "_Lift_": 0.2451,
+        "_CumLift_": 1.6246,
+        "_Resp_": 1.227,
+        "_CumResp_": 97.4738,
+        "_PctResp_": 7.3753,
+        "_CumPctResp_": 48.878,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 32
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 64.9946,
+        "_NObs_": 460,
+        "_Gain_": 20,
+        "_Lift_": 0.1445,
+        "_CumLift_": 1.5108,
+        "_Resp_": 0.7218,
+        "_CumResp_": 98.1956,
+        "_PctResp_": 4.3478,
+        "_CumPctResp_": 45.4561,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 33
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 70,
+        "_NObs_": 461,
+        "_Gain_": 16,
+        "_Lift_": 0.1154,
+        "_CumLift_": 1.411,
+        "_Resp_": 0.5774,
+        "_CumResp_": 98.773,
+        "_PctResp_": 3.4707,
+        "_CumPctResp_": 42.4539,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 34
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 74.9946,
+        "_NObs_": 460,
+        "_Gain_": 10,
+        "_Lift_": 0.0723,
+        "_CumLift_": 1.3219,
+        "_Resp_": 0.3609,
+        "_CumResp_": 99.1339,
+        "_PctResp_": 2.1739,
+        "_CumPctResp_": 39.7712,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 35
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 80,
+        "_NObs_": 461,
+        "_Gain_": 10,
+        "_Lift_": 0.0721,
+        "_CumLift_": 1.2437,
+        "_Resp_": 0.3609,
+        "_CumResp_": 99.4948,
+        "_PctResp_": 2.1692,
+        "_CumPctResp_": 37.4186,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 36
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 84.9946,
+        "_NObs_": 460,
+        "_Gain_": 10,
+        "_Lift_": 0.0723,
+        "_CumLift_": 1.1748,
+        "_Resp_": 0.3609,
+        "_CumResp_": 99.8556,
+        "_PctResp_": 2.1739,
+        "_CumPctResp_": 35.3475,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 37
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 90,
+        "_NObs_": 461,
+        "_Gain_": 2,
+        "_Lift_": 0.0144,
+        "_CumLift_": 1.1103,
+        "_Resp_": 0.0722,
+        "_CumResp_": 99.9278,
+        "_PctResp_": 0.4338,
+        "_CumPctResp_": 33.4057,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 38
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 94.9946,
+        "_NObs_": 460,
+        "_Gain_": 2,
+        "_Lift_": 0.0145,
+        "_CumLift_": 1.0527,
+        "_Resp_": 0.0722,
+        "_CumResp_": 100,
+        "_PctResp_": 0.4348,
+        "_CumPctResp_": 31.6722,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 39
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TRAIN",
+        "_PartInd_": 1,
+        "_formattedPartition_": "           1",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 100,
+        "_NObs_": 461,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 30.0869,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 40
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 5.013,
+        "_NObs_": 77,
+        "_Gain_": 76,
+        "_Lift_": 3.0814,
+        "_CumLift_": 3.0814,
+        "_Resp_": 15.4472,
+        "_CumResp_": 15.4472,
+        "_PctResp_": 98.7013,
+        "_CumPctResp_": 98.7013,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 41
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 10.026,
+        "_NObs_": 77,
+        "_Gain_": 70,
+        "_Lift_": 2.8381,
+        "_CumLift_": 2.9598,
+        "_Resp_": 14.2276,
+        "_CumResp_": 29.6748,
+        "_PctResp_": 90.9091,
+        "_CumPctResp_": 94.8052,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 42
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 15.0391,
+        "_NObs_": 77,
+        "_Gain_": 72,
+        "_Lift_": 2.9192,
+        "_CumLift_": 2.9463,
+        "_Resp_": 14.6341,
+        "_CumResp_": 44.3089,
+        "_PctResp_": 93.5065,
+        "_CumPctResp_": 94.3723,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 43
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 19.987,
+        "_NObs_": 76,
+        "_Gain_": 62,
+        "_Lift_": 2.5469,
+        "_CumLift_": 2.8474,
+        "_Resp_": 12.6016,
+        "_CumResp_": 56.9106,
+        "_PctResp_": 81.5789,
+        "_CumPctResp_": 91.2052,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 44
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 25,
+        "_NObs_": 77,
+        "_Gain_": 54,
+        "_Lift_": 2.1894,
+        "_CumLift_": 2.7154,
+        "_Resp_": 10.9756,
+        "_CumResp_": 67.8862,
+        "_PctResp_": 70.1299,
+        "_CumPctResp_": 86.9792,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 45
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 30.013,
+        "_NObs_": 77,
+        "_Gain_": 39,
+        "_Lift_": 1.5812,
+        "_CumLift_": 2.526,
+        "_Resp_": 7.9268,
+        "_CumResp_": 75.813,
+        "_PctResp_": 50.6494,
+        "_CumPctResp_": 80.9111,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 46
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 35.026,
+        "_NObs_": 77,
+        "_Gain_": 32,
+        "_Lift_": 1.2974,
+        "_CumLift_": 2.3502,
+        "_Resp_": 6.5041,
+        "_CumResp_": 82.3171,
+        "_PctResp_": 41.5584,
+        "_CumPctResp_": 75.2788,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 47
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 39.974,
+        "_NObs_": 76,
+        "_Gain_": 26,
+        "_Lift_": 1.068,
+        "_CumLift_": 2.1915,
+        "_Resp_": 5.2846,
+        "_CumResp_": 87.6016,
+        "_PctResp_": 34.2105,
+        "_CumPctResp_": 70.1954,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 48
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 44.987,
+        "_NObs_": 77,
+        "_Gain_": 15,
+        "_Lift_": 0.6082,
+        "_CumLift_": 2.015,
+        "_Resp_": 3.0488,
+        "_CumResp_": 90.6504,
+        "_PctResp_": 19.4805,
+        "_CumPctResp_": 64.5441,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 49
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 50,
+        "_NObs_": 77,
+        "_Gain_": 22,
+        "_Lift_": 0.892,
+        "_CumLift_": 1.9024,
+        "_Resp_": 4.4715,
+        "_CumResp_": 95.122,
+        "_PctResp_": 28.5714,
+        "_CumPctResp_": 60.9375,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 50
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 55.013,
+        "_NObs_": 77,
+        "_Gain_": 6,
+        "_Lift_": 0.2433,
+        "_CumLift_": 1.7512,
+        "_Resp_": 1.2195,
+        "_CumResp_": 96.3415,
+        "_PctResp_": 7.7922,
+        "_CumPctResp_": 56.0947,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 51
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 59.9609,
+        "_NObs_": 76,
+        "_Gain_": 5,
+        "_Lift_": 0.2054,
+        "_CumLift_": 1.6237,
+        "_Resp_": 1.0163,
+        "_CumResp_": 97.3577,
+        "_PctResp_": 6.5789,
+        "_CumPctResp_": 52.0087,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 52
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 64.974,
+        "_NObs_": 77,
+        "_Gain_": 5,
+        "_Lift_": 0.2027,
+        "_CumLift_": 1.5141,
+        "_Resp_": 1.0163,
+        "_CumResp_": 98.374,
+        "_PctResp_": 6.4935,
+        "_CumPctResp_": 48.497,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 53
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 69.987,
+        "_NObs_": 77,
+        "_Gain_": 5,
+        "_Lift_": 0.2027,
+        "_CumLift_": 1.4201,
+        "_Resp_": 1.0163,
+        "_CumResp_": 99.3902,
+        "_PctResp_": 6.4935,
+        "_CumPctResp_": 45.4884,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 54
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 75,
+        "_NObs_": 77,
+        "_Gain_": 1,
+        "_Lift_": 0.0405,
+        "_CumLift_": 1.3279,
+        "_Resp_": 0.2033,
+        "_CumResp_": 99.5935,
+        "_PctResp_": 1.2987,
+        "_CumPctResp_": 42.5347,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 55
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 79.9479,
+        "_NObs_": 76,
+        "_Gain_": 1,
+        "_Lift_": 0.0411,
+        "_CumLift_": 1.2483,
+        "_Resp_": 0.2033,
+        "_CumResp_": 99.7967,
+        "_PctResp_": 1.3158,
+        "_CumPctResp_": 39.9837,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 56
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 84.9609,
+        "_NObs_": 77,
+        "_Gain_": 1,
+        "_Lift_": 0.0405,
+        "_CumLift_": 1.177,
+        "_Resp_": 0.2033,
+        "_CumResp_": 100,
+        "_PctResp_": 1.2987,
+        "_CumPctResp_": 37.7011,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 57
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 89.974,
+        "_NObs_": 77,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1.1114,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 35.6006,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 58
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 94.987,
+        "_NObs_": 77,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1.0528,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 33.7217,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 59
+    },
+    {
+      "dataMap": {
+        "_DataRole_": "TEST",
+        "_PartInd_": 2,
+        "_formattedPartition_": "           2",
+        "_Column_": "P_event_indicator1",
+        "_Event_": 1,
+        "_Depth_": 100,
+        "_NObs_": 77,
+        "_Gain_": 0,
+        "_Lift_": 0,
+        "_CumLift_": 1,
+        "_Resp_": 0,
+        "_CumResp_": 100,
+        "_PctResp_": 0,
+        "_CumPctResp_": 32.0312,
+        "_TargetName_": "event_indicator"
+      },
+      "rowNumber": 60
+    }
+  ],
+  "version": 1,
+  "yInteger": false,
+  "xInteger": false
+}
