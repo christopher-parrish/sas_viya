@@ -8,7 +8,7 @@
 #############################
 
 ### caslib and table to use in modeling
-caslib = 'Public'
+caslib = 'casuser'
 in_mem_tbl = 'FINANCIAL_SERVICES_PREP'
 
 ########################
