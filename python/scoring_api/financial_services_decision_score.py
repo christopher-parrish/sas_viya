@@ -13,7 +13,7 @@ import pandas as pd
 ###################################
 
 # SCR listens on port 8080
-# Use the containers fully qualified domain name (FQDM)
+# Use the containers fully qualified domain name (FQDN)
 # Ensure the container instance is set up as 'public' (no credentials required)
 # URL is the name of the container image to be used
 # The container needs to be running when the code is executed
